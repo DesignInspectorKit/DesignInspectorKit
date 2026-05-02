@@ -90,8 +90,8 @@ public struct ViewInspectorInfo {
     public let scrollIsPagingEnabled: Bool?
     /// The layout margins of the view.
     public let layoutMargin: UIEdgeInsets
-    /// The Auto Layout constraints directly owned by the view.
-    public let constraints: [NSLayoutConstraint]
+    /// The Auto Layout constraints directly owned by the view, serialized as `ConstraintInfo` snapshots.
+    public let constraints: [ConstraintInfo]
     
     // MARK: - Accessibility
     

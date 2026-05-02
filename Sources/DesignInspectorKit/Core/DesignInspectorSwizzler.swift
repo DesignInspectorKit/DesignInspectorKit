@@ -56,18 +56,18 @@ extension UIViewController  {
     /// Swizzled replacement for `viewDidAppear(_:)`.
     /// Calls the original implementation and conditionally enables the inspector gesture.
     @objc func inspector_viewDidAppear(_ animated: Bool) {
-            inspector_viewDidAppear(animated)
-        
+        // After swizzling, this call resolves to the original viewDidAppear — NOT recursive.
+        inspector_viewDidAppear(animated)
+
         guard DesignInspector.shared.isEnabled else { return }
-        guard !isInspectorAlreadyEnable else { return }
-        
-        guard sholdEnableInspector else { return }
-        
+        guard !isInspectorAlreadyEnabled else { return }
+        guard shouldEnableInspector else { return }
+
         enableDesignInspector()
-        isInspectorAlreadyEnable = true
+        isInspectorAlreadyEnabled = true
     }
-    
-    private var isInspectorAlreadyEnable: Bool {
+
+    private var isInspectorAlreadyEnabled: Bool {
         get {
             return objc_getAssociatedObject(self, &SwizzlingKey.inspectorEnableKey) as? Bool ?? false
         }
@@ -75,18 +75,13 @@ extension UIViewController  {
             objc_setAssociatedObject(self, &SwizzlingKey.inspectorEnableKey, newValue, .OBJC_ASSOCIATION_RETAIN_NONATOMIC)
         }
     }
-    
-    private var sholdEnableInspector: Bool {
-        if self is InspectorOverlayViewController {
-            return false
-        }
-        let viewControllerBundle = Bundle(for: type(of: self))
-        let isSystemClass = viewControllerBundle != Bundle.main && viewControllerBundle.bundlePath.contains("com.apple") == true
-        
-        if isSystemClass {
-            return false
-        }
-        
-        return true
+
+    private var shouldEnableInspector: Bool {
+        guard !(self is InspectorOverlayViewController) else { return false }
+        let bundle = Bundle(for: type(of: self))
+        let path = bundle.bundlePath
+        let isSystemClass = bundle != Bundle.main
+            && (path.contains("/System/") || path.contains("/Library/Frameworks/"))
+        return !isSystemClass
     }
 }

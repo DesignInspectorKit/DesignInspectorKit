@@ -22,6 +22,7 @@ import UIKit
     #expect(r == 1.0)
     #expect(g == 0.0)
     #expect(b == 0.0)
+    #expect(a == 1.0)
 }
 
 @Test func initHexString_withHash_parsesCorrectly() {

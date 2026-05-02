@@ -58,7 +58,7 @@ public final class ViewHierachyInspector {
         let controlProps = extractControlState(from: view)
         let borderColor = extractBorderColor(from: view)
         
-        let accessibilityLabel = imageProps.acessibilityLabel ?? view.accessibilityLabel
+        let accessibilityLabel = imageProps.accessibilityLabel ?? view.accessibilityLabel
         
         let backgroundColorToken = view.backgroundColor.flatMap { configuration.colorTokenColorResolver?($0) }
         let textColorToken = textProps.textColor.flatMap { configuration.colorTokenColorResolver?($0) }
@@ -88,7 +88,7 @@ public final class ViewHierachyInspector {
             fontToken: fontToken,
             textColor: textProps.textColor,
             textColorToken: textColorToken,
-            textAlignment: textProps.textAligment,
+            textAlignment: textProps.textAlignment,
             numberOfLines: textProps.numberOfLines,
             spacing: layoutProps.spacing,
             spacingToken: spacingToken,
@@ -99,7 +99,16 @@ public final class ViewHierachyInspector {
             scrollContentSize: layoutProps.scrollContentSize,
             scrollIsPagingEnabled: layoutProps.scrollIsPagingEnabled,
             layoutMargin: view.layoutMargins,
-            constraints: view.constraints,
+            constraints: view.constraints.map { constraint in
+                ConstraintInfo(
+                    attribute: attributeName(constraint.firstAttribute),
+                    relation: relationName(constraint.relation),
+                    constant: constraint.constant,
+                    multiplier: constraint.multiplier,
+                    priority: constraint.priority.rawValue,
+                    isActive: constraint.isActive
+                )
+            },
             accessibilityIdentifier: view.accessibilityIdentifier,
             accessibilityLabel: accessibilityLabel,
             accessibilityTraits: view.accessibilityTraits,
@@ -122,7 +131,7 @@ public final class ViewHierachyInspector {
         var text: String?
         var font: UIFont?
         var textColor: UIColor?
-        var textAligment: NSTextAlignment?
+        var textAlignment: NSTextAlignment?
         var numberOfLines: Int?
     }
     
@@ -133,25 +142,25 @@ public final class ViewHierachyInspector {
             props.text = label.text
             props.font = label.font
             props.textColor = label.textColor
-            props.textAligment = label.textAlignment
+            props.textAlignment = label.textAlignment
             props.numberOfLines = label.numberOfLines
         } else if let button = view as? UIButton {
             props.text = button.title(for: .normal)
             props.font = button.titleLabel?.font
             props.textColor = button.titleColor(for: .normal)
-            props.textAligment = button.titleLabel?.textAlignment
+            props.textAlignment = button.titleLabel?.textAlignment
             props.numberOfLines = button.titleLabel?.numberOfLines
         } else if let textField = view as? UITextField {
             props.text = textField.text?.nilIfEmpty ?? textField.placeholder
             props.font = textField.font
             props.textColor = textField.textColor
-            props.textAligment = textField.textAlignment
+            props.textAlignment = textField.textAlignment
             props.numberOfLines = 1
         } else if let textView = view as? UITextView {
             props.text = textView.text
             props.font = textView.font
             props.textColor = textView.textColor
-            props.textAligment = textView.textAlignment
+            props.textAlignment = textView.textAlignment
         }
         return props
     }
@@ -162,7 +171,7 @@ public final class ViewHierachyInspector {
         var size: CGSize?
         var renderedSize: CGSize?
         var contentMode: UIView.ContentMode?
-        var acessibilityLabel: String?
+        var accessibilityLabel: String?
     }
     
     private func extractImageProperties(from view: UIView) -> ImageProperties {
@@ -181,7 +190,7 @@ public final class ViewHierachyInspector {
         
         props.size = CGSize(width: image.size.width, height: image.size.height)
         props.token = configuration.imageTokenResolver?(image)
-        props.acessibilityLabel = configuration.imageAcessibilityLabelResolver?(image) ?? imageView.accessibilityLabel?.nilIfEmpty
+        props.accessibilityLabel = configuration.imageAcessibilityLabelResolver?(image) ?? imageView.accessibilityLabel?.nilIfEmpty
         
         props.name = props.token
         ?? image.accessibilityIdentifier?.nilIfEmpty

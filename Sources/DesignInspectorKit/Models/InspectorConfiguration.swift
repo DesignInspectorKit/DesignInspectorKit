@@ -26,6 +26,8 @@ public struct InspectorConfiguration {
     public var textColor: UIColor
     /// The secondary (label) text color used in the info panel.
     public var secondaryTextColor: UIColor
+    /// The background color of the full-screen overlay. Defaults to semi-transparent black.
+    public var overlayBackgroundColor: UIColor
     
     // MARK: - Token Resolvers
     
@@ -48,6 +50,7 @@ public struct InspectorConfiguration {
         panelBackgroundColor: .systemBackground,
         textColor: .label,
         secondaryTextColor: .secondaryLabel,
+        overlayBackgroundColor: UIColor.black.withAlphaComponent(0.8),
         colorTokenColorResolver: nil,
         spacingTokenColorResolver: nil,
         fontTokenColorResolver: nil,
@@ -61,9 +64,10 @@ public struct InspectorConfiguration {
     public init(
         highlightColor: UIColor = UIColor.systemBlue.withAlphaComponent(0.3),
         annotationColor: UIColor = .systemRed,
-        panelBackgroundColor: UIColor = .white,
-        textColor: UIColor = .darkGray,
-        secondaryTextColor: UIColor = .gray,
+        panelBackgroundColor: UIColor = .systemBackground,
+        textColor: UIColor = .label,
+        secondaryTextColor: UIColor = .secondaryLabel,
+        overlayBackgroundColor: UIColor = UIColor.black.withAlphaComponent(0.8),
         colorTokenColorResolver: ((UIColor) -> String)? = nil,
         spacingTokenColorResolver: ((CGFloat) -> String)? = nil,
         fontTokenColorResolver: ((UIFont) -> String)? = nil,
@@ -76,6 +80,7 @@ public struct InspectorConfiguration {
         self.panelBackgroundColor = panelBackgroundColor
         self.textColor = textColor
         self.secondaryTextColor = secondaryTextColor
+        self.overlayBackgroundColor = overlayBackgroundColor
         self.colorTokenColorResolver = colorTokenColorResolver
         self.spacingTokenColorResolver = spacingTokenColorResolver
         self.fontTokenColorResolver = fontTokenColorResolver

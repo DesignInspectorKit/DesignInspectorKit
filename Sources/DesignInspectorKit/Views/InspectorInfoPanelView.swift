@@ -110,7 +110,7 @@ final class InspectorInfoPanelView: UIView {
         contentStackview.arrangedSubviews.forEach { $0.removeFromSuperview() }
         
         addInfoRow(
-            label: "Frame",
+            label: InspectorKey.frame,
             value: "\(Int(info.frame.origin.x)), \(Int(info.frame.origin.y)) - \(Int(info.frame.width)) x \(Int(info.frame.height))"
         )
         if let bgColor = info.backgroundColor, bgColor != .clear {
@@ -120,26 +120,26 @@ final class InspectorInfoPanelView: UIView {
             } else {
                 colorValue = bgColor.hexString
             }
-            addInfoRow(label: "Background", value: colorValue, color: bgColor)
+            addInfoRow(label: InspectorKey.background, value: colorValue, color: bgColor)
         }
-        
+
         if let imageName = info.imageName {
-            addInfoRow(label: "Image", value: imageName)
+            addInfoRow(label: InspectorKey.image, value: imageName)
         }
-        
+
         if let renderedSize = info.imageRenderedSize, renderedSize.width > 0 && renderedSize.height > 0 {
-            addInfoRow(label: "Image Size", value: "\(Int(renderedSize.width)) x \(Int(renderedSize.height)) pt")
+            addInfoRow(label: InspectorKey.imageSize, value: "\(Int(renderedSize.width)) x \(Int(renderedSize.height)) pt")
         }
-        
+
         if let contentMode = info.contentMode {
-            addInfoRow(label: "Content Mode", value: contentModeName(contentMode))
+            addInfoRow(label: InspectorKey.contentMode, value: contentModeName(contentMode))
         }
 
         if let text = info.text, !text.isEmpty {
             let truncated = text.count > 30 ? String(text.prefix(30)) + "..." : text
-            addInfoRow(label: "Text", value: "\"\(truncated)\"")
+            addInfoRow(label: InspectorKey.text, value: "\"\(truncated)\"")
         }
-        
+
         if let font = info.font {
             let fontValue: String
             if let token = info.fontToken {
@@ -147,9 +147,9 @@ final class InspectorInfoPanelView: UIView {
             } else {
                 fontValue = "\(font.fontName) \(Int(font.pointSize))pt"
             }
-            addInfoRow(label: "Font", value: fontValue)
+            addInfoRow(label: InspectorKey.font, value: fontValue)
         }
-        
+
         if let textColor = info.textColor, textColor != .clear {
             let colorValue: String
             if let token = info.textColorToken {
@@ -157,9 +157,9 @@ final class InspectorInfoPanelView: UIView {
             } else {
                 colorValue = textColor.hexString
             }
-            addInfoRow(label: "Text Color", value: colorValue, color: textColor)
+            addInfoRow(label: InspectorKey.textColor, value: colorValue, color: textColor)
         }
-        
+
         if let spacing = info.spacing {
             let spacingValue: String
             if let token = info.spacingToken {
@@ -167,37 +167,37 @@ final class InspectorInfoPanelView: UIView {
             } else {
                 spacingValue = "\(Int(spacing))pt"
             }
-            addInfoRow(label: "Spacing", value: spacingValue)
+            addInfoRow(label: InspectorKey.spacing, value: spacingValue)
         }
-        
+
         if info.cornerRadius > 0 {
-            addInfoRow(label: "Corner Radius", value: "\(Int(info.cornerRadius))pt")
+            addInfoRow(label: InspectorKey.cornerRadius, value: "\(Int(info.cornerRadius))pt")
         }
-        
+
         if info.alpha < 1 {
-            addInfoRow(label: "Alpha", value: String(format: "%.2f", info.alpha))
+            addInfoRow(label: InspectorKey.alpha, value: String(format: "%.2f", info.alpha))
         }
-        
+
         if let accessibilityId = info.accessibilityIdentifier {
-            addInfoRow(label: "Accessibility ID", value: accessibilityId)
+            addInfoRow(label: InspectorKey.accessibilityId, value: accessibilityId)
         }
-        
+
         if let accessibilityLabel = info.accessibilityLabel, !accessibilityLabel.isEmpty {
-            addInfoRow(label: "Accessibility Label", value: accessibilityLabel)
+            addInfoRow(label: InspectorKey.accessibilityLabel, value: accessibilityLabel)
         }
-        
+
         if info.borderWidth > 0 {
-            addInfoRow(label: "Border Width", value: "\(info.borderWidth)pt")
+            addInfoRow(label: InspectorKey.borderWidth, value: "\(info.borderWidth)pt")
         }
-        
+
         if let borderColor = info.borderColor {
-            addInfoRow(label: "Border Color", value: borderColor.hexString, color: borderColor)
+            addInfoRow(label: InspectorKey.borderColor, value: borderColor.hexString, color: borderColor)
         }
-        
+
         if let tintColor = info.tintColor {
-            addInfoRow(label: "Tint Color", value: tintColor.hexString, color: tintColor)
+            addInfoRow(label: InspectorKey.tintColor, value: tintColor.hexString, color: tintColor)
         }
-        
+
         // MARK: UIStackView
         if let axis = info.stackAxis {
             addInfoRow(label: "Axis", value: axis == .horizontal ? "Horizontal" : "Vertical")
@@ -208,7 +208,7 @@ final class InspectorInfoPanelView: UIView {
         if let alignment = info.stackAlignment {
             addInfoRow(label: "Alignment", value: stackAlignmentName(alignment))
         }
-        
+
         // MARK: UIScrollView
         if let contentSize = info.scrollContentSize {
             addInfoRow(label: "Content Size", value: "\(Int(contentSize.width)) x \(Int(contentSize.height)) pt")
@@ -217,9 +217,9 @@ final class InspectorInfoPanelView: UIView {
             addInfoRow(label: "Paging", value: paging ? "Enabled" : "Disabled")
         }
         if let insets = info.contentInsets {
-            addInfoRow(label: "Content Insets", value: "T:\(Int(insets.top)) L:\(Int(insets.left)) B:\(Int(insets.bottom)) R:\(Int(insets.right))")
+            addInfoRow(label: InspectorKey.contentInsets, value: "T:\(Int(insets.top)) L:\(Int(insets.left)) B:\(Int(insets.bottom)) R:\(Int(insets.right))")
         }
-        
+
         // MARK: UISwitch
         if let isOn = info.switchIsOn {
             addInfoRow(label: "Is On", value: isOn ? "true" : "false")
@@ -230,13 +230,13 @@ final class InspectorInfoPanelView: UIView {
         if let thumbTint = info.switchThumbTintColor {
             addInfoRow(label: "Thumb Tint", value: thumbTint.hexString, color: thumbTint)
         }
-        
+
         // MARK: UISlider
         if let sliderValue = info.sliderValue, let minVal = info.sliderMinValue, let maxVal = info.sliderMaxValue {
             addInfoRow(label: "Value", value: String(format: "%.2f", sliderValue))
             addInfoRow(label: "Range", value: "\(minVal) – \(maxVal)")
         }
-        
+
         // MARK: UIProgressView
         if let progress = info.progressValue {
             addInfoRow(label: "Progress", value: String(format: "%.0f%%", progress * 100))
@@ -244,49 +244,41 @@ final class InspectorInfoPanelView: UIView {
         if let progressTint = info.progressTintColor {
             addInfoRow(label: "Progress Tint", value: progressTint.hexString, color: progressTint)
         }
-        
+
         // MARK: UIActivityIndicatorView
         if let animating = info.activityIsAnimating {
             addInfoRow(label: "Animating", value: animating ? "true" : "false")
         }
-        
+
         // MARK: Layout Margins
         let m = info.layoutMargin
         if m.top != 0 || m.left != 0 || m.bottom != 0 || m.right != 0 {
-            addInfoRow(label: "Margins", value: "T:\(Int(m.top)) L:\(Int(m.left)) B:\(Int(m.bottom)) R:\(Int(m.right))")
+            addInfoRow(label: InspectorKey.layoutMargins, value: "T:\(Int(m.top)) L:\(Int(m.left)) B:\(Int(m.bottom)) R:\(Int(m.right))")
         }
-        
+
         // MARK: Sibling Spacing
         if let view = info.view {
             if let topSpacing = view.spacingToSiblingAbove {
-                let spacingValue: String
-                if let token = configuration.spacingTokenColorResolver?(topSpacing) {
-                    spacingValue = "\(token) (\(Int(topSpacing))pt)"
-                } else {
-                    spacingValue = "\(Int(topSpacing))pt"
-                }
-                addInfoRow(label: "Spacing Above", value: spacingValue)
+                let spacingValue = configuration.spacingTokenColorResolver?(topSpacing)
+                    .map { "\($0) (\(Int(topSpacing))pt)" } ?? "\(Int(topSpacing))pt"
+                addInfoRow(label: InspectorKey.spacingAbove, value: spacingValue)
             }
             if let bottomSpacing = view.spacingToSiblingBelow {
-                let spacingValue: String
-                if let token = configuration.spacingTokenResolver?(bottomSpacing) {
-                    spacingValue = "\(token) (\(Int(bottomSpacing))pt)"
-                } else {
-                    spacingValue = "\(Int(bottomSpacing))pt"
-                }
-                addInfoRow(label: "Spacing Below", value: spacingValue)
+                let spacingValue = configuration.spacingTokenResolver?(bottomSpacing)
+                    .map { "\($0) (\(Int(bottomSpacing))pt)" } ?? "\(Int(bottomSpacing))pt"
+                addInfoRow(label: InspectorKey.spacingBelow, value: spacingValue)
             }
             if let leftSpacing = view.spacingToSiblingLeft {
-                addInfoRow(label: "Spacing Left", value: "\(Int(leftSpacing))pt")
+                addInfoRow(label: InspectorKey.spacingLeft, value: "\(Int(leftSpacing))pt")
             }
             if let rightSpacing = view.spacingToSiblingRight {
-                addInfoRow(label: "Spacing Right", value: "\(Int(rightSpacing))pt")
+                addInfoRow(label: InspectorKey.spacingRight, value: "\(Int(rightSpacing))pt")
             }
         }
-        
+
         // MARK: Hierarchy
-        addInfoRow(label: "Subviews", value: "\(info.subviewsCount)")
-        addInfoRow(label: "Depth", value: "\(info.depth)")
+        addInfoRow(label: InspectorKey.subviewsCount, value: "\(info.subviewsCount)")
+        addInfoRow(label: InspectorKey.depth, value: "\(info.depth)")
     }
     
     /// Appends a labeled row to the content stack.

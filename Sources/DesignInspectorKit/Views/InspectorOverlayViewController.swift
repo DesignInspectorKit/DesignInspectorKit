@@ -19,17 +19,17 @@ public final class InspectorOverlayViewController: UIViewController {
         static let padding: CGFloat = 16
         static let topPadding: CGFloat = 12
         static let closeButtonSize: CGFloat = 32
-        static let conerRadius: CGFloat = 12
+        static let cornerRadius: CGFloat = 12
         static let instructionWidth: CGFloat = 280
         static let instructionHeight: CGFloat = 50
-        static let desactiveWidth: CGFloat = 220
+        static let deactivateWidth: CGFloat = 220
     }
     
     private let targetView: UIView
     private let navigationBar: UINavigationBar?
     private let configuration: InspectorConfiguration
     private var selectedView: UIView?
-    private var highllightLayer: CAShapeLayer?
+    private var highlightLayer: CAShapeLayer?
     private var constraintLayer: [CALayer] = []
     private var isClosing = false
     
@@ -61,7 +61,7 @@ public final class InspectorOverlayViewController: UIViewController {
         button.layer.shadowOffset = CGSize(width: 0, height: 2)
         button.layer.shadowRadius = 4
         button.accessibilityIdentifier = "inspector_close_button"
-        button.addTarget(self, action: #selector(closedTapped), for: .touchUpInside)
+        button.addTarget(self, action: #selector(closeButtonTapped), for: .touchUpInside)
         button.translatesAutoresizingMaskIntoConstraints = false
         return button
     }()
@@ -113,7 +113,7 @@ public final class InspectorOverlayViewController: UIViewController {
     }
     
     private func setupUI() {
-        view.backgroundColor = UIColor.black.withAlphaComponent(0.8)
+        view.backgroundColor = configuration.overlayBackgroundColor
         
         if let navBar = navigationBar, let navSnapshot = navBar.snapshotView(afterScreenUpdates: false) {
             navSnapshot.frame = navBar.frame
@@ -153,7 +153,7 @@ public final class InspectorOverlayViewController: UIViewController {
             
             deactivateLabel.centerXAnchor.constraint(equalTo: view.centerXAnchor),
             deactivateLabel.centerYAnchor.constraint(equalTo: view.centerYAnchor),
-            deactivateLabel.widthAnchor.constraint(equalToConstant: Layout.desactiveWidth),
+            deactivateLabel.widthAnchor.constraint(equalToConstant: Layout.deactivateWidth),
             deactivateLabel.heightAnchor.constraint(equalToConstant: Layout.instructionHeight)
         ])
     }
@@ -163,7 +163,7 @@ public final class InspectorOverlayViewController: UIViewController {
         view.addGestureRecognizer(tapGesture)
     }
     
-    @objc private func closedTapped() {
+    @objc private func closeButtonTapped() {
         guard !isClosing else { return }
         isClosing = true
         
@@ -237,7 +237,7 @@ public final class InspectorOverlayViewController: UIViewController {
         selectedView = view
         
         
-        highllightLayer?.removeFromSuperlayer()
+        highlightLayer?.removeFromSuperlayer()
         removeConstraintsLayers()
         
         let frameInSelf = view.convert(view.bounds, to: self.view)
@@ -248,9 +248,9 @@ public final class InspectorOverlayViewController: UIViewController {
         layer.strokeColor = configuration.annotationColor.cgColor
         layer.lineWidth = 1
         self.view.layer.addSublayer(layer)
-        highllightLayer = layer
+        highlightLayer = layer
         
-        drawConstraintVizualizations(for: view, frameInSelf: frameInSelf)
+        drawConstraintVisualizations(for: view, frameInSelf: frameInSelf)
         
         let inspector = ViewHierachyInspector(configuration: configuration)
         let info = inspector.inspectSingle(view)
@@ -272,7 +272,7 @@ public final class InspectorOverlayViewController: UIViewController {
     /// - Parameters:
     ///   - view: The selected view.
     ///   - frameInSelf: The view's frame converted to the overlay's coordinate space.
-    private func drawConstraintVizualizations(for view: UIView, frameInSelf: CGRect) {
+    private func drawConstraintVisualizations(for view: UIView, frameInSelf: CGRect) {
         let constraintColor = UIColor.systemBlue
         
         guard let superView = view.superview else { return }
