@@ -13,23 +13,23 @@ extension UIViewController {
         static var inspectorGestureKey: UInt8 = 0
     }
     
-    /// Attaches a long-press gesture recognizer to this view controller.
-    /// Requires **2 fingers** held for **2 seconds** to activate the inspector overlay.
+    /// Attaches a two-finger tap gesture recognizer to this view controller.
+    /// A single tap with **2 fingers** activates the inspector overlay.
     /// Has no effect if the gesture is already attached.
     public func enableDesignInspector() {
         guard objc_getAssociatedObject(self, &AssociatedKeys.inspectorGestureKey) == nil else { return }
 
-        let gesture = UILongPressGestureRecognizer(target: self, action: #selector(handleInspectorGesture(_:)))
-        gesture.minimumPressDuration = 2
+        let gesture = UITapGestureRecognizer(target: self, action: #selector(handleInspectorGesture(_:)))
         gesture.numberOfTouchesRequired = 2
+        gesture.numberOfTapsRequired = 1
         view.addGestureRecognizer(gesture)
         
         objc_setAssociatedObject(self, &AssociatedKeys.inspectorGestureKey, gesture, .OBJC_ASSOCIATION_RETAIN_NONATOMIC)
     }
     
-    /// Removes the inspector long-press gesture from this view controller.
+    /// Removes the inspector two-finger tap gesture from this view controller.
     public func disableDesignInspector() {
-        guard let gesture = objc_getAssociatedObject(self, &AssociatedKeys.inspectorGestureKey) as? UILongPressGestureRecognizer else { return }
+        guard let gesture = objc_getAssociatedObject(self, &AssociatedKeys.inspectorGestureKey) as? UITapGestureRecognizer else { return }
         view.removeGestureRecognizer(gesture)
         objc_setAssociatedObject(self, &AssociatedKeys.inspectorGestureKey, nil, .OBJC_ASSOCIATION_RETAIN_NONATOMIC)
     }
@@ -48,7 +48,8 @@ extension UIViewController {
         present(inspectorVC, animated: true, completion: nil)
     }
     
-    @objc private func handleInspectorGesture(_ gesture: UILongPressGestureRecognizer) {
+    @objc private func handleInspectorGesture(_ gesture: UITapGestureRecognizer) {
+        guard gesture.state == .ended else { return }
         showDesignInspector()
     }
         
