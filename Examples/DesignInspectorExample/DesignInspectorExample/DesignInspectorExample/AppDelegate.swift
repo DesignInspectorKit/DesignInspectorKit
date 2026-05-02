@@ -2,7 +2,6 @@
 //  AppDelegate.swift
 //  DesignInspectorExample
 //
-//  Created by Josimar Fiuza Melo on 02/05/26.
 //
 
 import UIKit

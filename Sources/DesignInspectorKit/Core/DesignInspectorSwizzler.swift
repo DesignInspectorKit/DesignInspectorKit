@@ -2,7 +2,6 @@
 //  File.swift
 //  DesignInspectorKit
 //
-//  Created by Josimar Fiuza Melo on 30/04/26.
 //
 
 import UIKit
