@@ -298,14 +298,19 @@ final class InspectorInfoPanelView: UIView {
         labelView.text = label
         labelView.font = .monospacedSystemFont(ofSize: 12, weight: .regular)
         labelView.textColor = configuration.secondaryTextColor
+        labelView.numberOfLines = 0
+        labelView.setContentHuggingPriority(.defaultHigh, for: .horizontal)
+        labelView.setContentCompressionResistancePriority(.defaultHigh, for: .horizontal)
         labelView.translatesAutoresizingMaskIntoConstraints = false
-        
+
         let valueView = UILabel()
         valueView.text = value
         valueView.translatesAutoresizingMaskIntoConstraints = false
         valueView.font = .monospacedSystemFont(ofSize: 12, weight: .regular)
         valueView.textColor = configuration.textColor
         valueView.numberOfLines = 0
+        valueView.setContentHuggingPriority(.defaultLow, for: .horizontal)
+        valueView.setContentCompressionResistancePriority(.defaultLow, for: .horizontal)
         
         rowView.addSubview(labelView)
         rowView.addSubview(valueView)
@@ -328,7 +333,7 @@ final class InspectorInfoPanelView: UIView {
                 
                 labelView.leadingAnchor.constraint(equalTo: swatchView.trailingAnchor, constant: Layout.spacing),
                 labelView.topAnchor.constraint(equalTo: rowView.topAnchor),
-                labelView.widthAnchor.constraint(equalToConstant: Layout.labelWidth),
+                labelView.widthAnchor.constraint(greaterThanOrEqualToConstant: Layout.labelWidth),
                 
                 valueView.leadingAnchor.constraint(equalTo: labelView.trailingAnchor, constant: Layout.spacing),
                 valueView.topAnchor.constraint(equalTo: rowView.topAnchor),
@@ -339,7 +344,7 @@ final class InspectorInfoPanelView: UIView {
             NSLayoutConstraint.activate([
                 labelView.leadingAnchor.constraint(equalTo: rowView.leadingAnchor),
                 labelView.topAnchor.constraint(equalTo: rowView.topAnchor),
-                labelView.widthAnchor.constraint(equalToConstant: Layout.labelWidth),
+                labelView.widthAnchor.constraint(greaterThanOrEqualToConstant: Layout.labelWidth),
                 
                 valueView.leadingAnchor.constraint(equalTo: labelView.trailingAnchor, constant: Layout.spacing),
                 valueView.topAnchor.constraint(equalTo: rowView.topAnchor),
