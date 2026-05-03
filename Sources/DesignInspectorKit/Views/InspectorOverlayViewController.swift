@@ -148,6 +148,7 @@ public final class InspectorOverlayViewController: UIViewController {
             infoPanel.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: Layout.padding),
             infoPanel.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: -Layout.padding),
             infoPanel.bottomAnchor.constraint(equalTo: view.safeAreaLayoutGuide.bottomAnchor, constant: -Layout.padding),
+            infoPanel.heightAnchor.constraint(lessThanOrEqualTo: view.heightAnchor, multiplier: 0.4),
             
             deactivateLabel.centerXAnchor.constraint(equalTo: view.centerXAnchor),
             deactivateLabel.centerYAnchor.constraint(equalTo: view.centerYAnchor),

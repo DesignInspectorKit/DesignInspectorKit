@@ -26,6 +26,8 @@ final class InspectorInfoPanelView: UIView {
         let view = UIView()
         view.backgroundColor = configuration.panelBackgroundColor
         view.layer.cornerRadius = Layout.conerRadius
+        view.layer.borderWidth = 2
+        view.layer.borderColor = UIColor.systemRed.cgColor
         view.layer.shadowColor = UIColor.black.cgColor
         view.layer.shadowOpacity = 0.2
         view.layer.shadowOffset = CGSize(width: 0, height: 4)
@@ -54,6 +56,7 @@ final class InspectorInfoPanelView: UIView {
         let scroll = UIScrollView()
         scroll.translatesAutoresizingMaskIntoConstraints = false
         scroll.showsVerticalScrollIndicator = true
+        scroll.alwaysBounceVertical = true
         return scroll
     }()
     
@@ -70,34 +73,35 @@ final class InspectorInfoPanelView: UIView {
     }
     
     private func setupUI() {
-        addSubview(containerView)
-        
+        addSubview(scrollView)
+
+        scrollView.addSubview(containerView)
         containerView.addSubview(titleLabel)
         containerView.addSubview(contentStackview)
-        addSubview(scrollView)
-        scrollView.addSubview(containerView)
-        
+
         NSLayoutConstraint.activate([
-            containerView.topAnchor.constraint(equalTo: topAnchor),
-            containerView.leadingAnchor.constraint(equalTo: leadingAnchor),
-            containerView.trailingAnchor.constraint(equalTo: trailingAnchor),
-            containerView.bottomAnchor.constraint(equalTo: bottomAnchor),
-            
+            // scrollView preenche toda a panel view
+            scrollView.topAnchor.constraint(equalTo: topAnchor),
+            scrollView.leadingAnchor.constraint(equalTo: leadingAnchor),
+            scrollView.trailingAnchor.constraint(equalTo: trailingAnchor),
+            scrollView.bottomAnchor.constraint(equalTo: bottomAnchor),
+
+            // containerView segue o content layout guide do scroll
+            containerView.topAnchor.constraint(equalTo: scrollView.contentLayoutGuide.topAnchor),
+            containerView.leadingAnchor.constraint(equalTo: scrollView.contentLayoutGuide.leadingAnchor),
+            containerView.trailingAnchor.constraint(equalTo: scrollView.contentLayoutGuide.trailingAnchor),
+            containerView.bottomAnchor.constraint(equalTo: scrollView.contentLayoutGuide.bottomAnchor),
+            // largura do container = largura do frame do scroll (sem scroll horizontal)
+            containerView.widthAnchor.constraint(equalTo: scrollView.frameLayoutGuide.widthAnchor),
+
             titleLabel.topAnchor.constraint(equalTo: containerView.topAnchor, constant: Layout.padding),
             titleLabel.leadingAnchor.constraint(equalTo: containerView.leadingAnchor, constant: Layout.padding),
             titleLabel.trailingAnchor.constraint(equalTo: containerView.trailingAnchor, constant: -Layout.padding),
-            
-            scrollView.topAnchor.constraint(equalTo: titleLabel.bottomAnchor, constant: Layout.spacing),
-            scrollView.leadingAnchor.constraint(equalTo: containerView.leadingAnchor, constant: Layout.padding),
-            scrollView.trailingAnchor.constraint(equalTo: containerView.trailingAnchor, constant: -Layout.padding),
-            scrollView.bottomAnchor.constraint(equalTo: containerView.bottomAnchor, constant: -Layout.padding),
-            scrollView.heightAnchor.constraint(lessThanOrEqualToConstant: Layout.maxScrollHeight),
-            
-            contentStackview.topAnchor.constraint(equalTo: scrollView.topAnchor),
-            contentStackview.leadingAnchor.constraint(equalTo: scrollView.leadingAnchor),
-            contentStackview.trailingAnchor.constraint(equalTo: scrollView.trailingAnchor),
-            contentStackview.bottomAnchor.constraint(equalTo: scrollView.bottomAnchor),
-            contentStackview.widthAnchor.constraint(equalTo: scrollView.widthAnchor)
+
+            contentStackview.topAnchor.constraint(equalTo: titleLabel.bottomAnchor, constant: Layout.spacing),
+            contentStackview.leadingAnchor.constraint(equalTo: containerView.leadingAnchor, constant: Layout.padding),
+            contentStackview.trailingAnchor.constraint(equalTo: containerView.trailingAnchor, constant: -Layout.padding),
+            contentStackview.bottomAnchor.constraint(equalTo: containerView.bottomAnchor, constant: -Layout.padding),
         ])
     }
     
