@@ -210,12 +210,6 @@ xcodebuild -scheme DesignInspectorKit -destination 'platform=iOS Simulator,name=
 xcodebuild test -scheme DesignInspectorKit -destination 'platform=iOS Simulator,name=iPhone 16'
 ```
 
-### Lint
-
-```bash
-swiftlint
-```
-
 ## Git Flow
 
 This project follows **Git Flow**:
