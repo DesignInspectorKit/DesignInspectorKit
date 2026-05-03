@@ -66,6 +66,31 @@ public enum InspectorKey {
     public static let subviewsCount         = "inspector.subviews_count".localized
     public static let depth                 = "inspector.depth".localized
 
+    // MARK: - UIStackView
+    public static let stackAxis             = "inspector.stack_axis".localized
+    public static let stackDistribution     = "inspector.stack_distribution".localized
+    public static let stackAlignment        = "inspector.stack_alignment".localized
+
+    // MARK: - UIScrollView
+    public static let scrollContentSize     = "inspector.scroll_content_size".localized
+    public static let scrollPaging          = "inspector.scroll_paging".localized
+
+    // MARK: - UISwitch
+    public static let switchIsOn            = "inspector.switch_is_on".localized
+    public static let switchOnTint          = "inspector.switch_on_tint".localized
+    public static let switchThumbTint       = "inspector.switch_thumb_tint".localized
+
+    // MARK: - UISlider
+    public static let sliderValue           = "inspector.slider_value".localized
+    public static let sliderRange           = "inspector.slider_range".localized
+
+    // MARK: - UIProgressView
+    public static let progressValue         = "inspector.progress_value".localized
+    public static let progressTint          = "inspector.progress_tint".localized
+
+    // MARK: - UIActivityIndicatorView
+    public static let activityAnimating     = "inspector.activity_animating".localized
+
     // MARK: - Constraints
     public static let constraints           = "inspector.constraints".localized
     public static let constraintActive      = "inspector.constraint_active".localized

@@ -26,7 +26,6 @@ public final class InspectorOverlayViewController: UIViewController {
     private let targetView: UIView
     private let navigationBar: UINavigationBar?
     private let configuration: InspectorConfiguration
-    private var selectedView: UIView?
     private var highlightLayer: CAShapeLayer?
     private var constraintLayer: [CALayer] = []
     private var isClosing = false
@@ -111,14 +110,12 @@ public final class InspectorOverlayViewController: UIViewController {
     
     private func setupUI() {
         view.backgroundColor = configuration.overlayBackgroundColor
-        
+
         if let navBar = navigationBar, let navSnapshot = navBar.snapshotView(afterScreenUpdates: false) {
             navSnapshot.frame = navBar.frame
             navSnapshot.isUserInteractionEnabled = true
             view.addSubview(navSnapshot)
         }
-        
-        
         if let snapshot = targetView.snapshotView(afterScreenUpdates: false) {
             snapshot.frame = targetView.frame
             snapshot.isUserInteractionEnabled = true
@@ -132,8 +129,6 @@ public final class InspectorOverlayViewController: UIViewController {
         view.bringSubviewToFront(closeButton)
         
         NSLayoutConstraint.activate([
-            
-            
             closeButton.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor, constant: Layout.topPadding),
             closeButton.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: -Layout.padding),
             closeButton.widthAnchor.constraint(equalToConstant: Layout.closeButtonSize),
@@ -166,7 +161,7 @@ public final class InspectorOverlayViewController: UIViewController {
         isClosing = true
         
         instructionLabel.layer.removeAllAnimations()
-        showDesactivateMessage()
+        showDeactivateMessage()
     }
     
     private func animateInstructionLabel() {
@@ -192,7 +187,7 @@ public final class InspectorOverlayViewController: UIViewController {
         }
     }
     
-    private func showDesactivateMessage() {
+    private func showDeactivateMessage() {
         UIView.animate(withDuration: 0.3) { [weak self] in
             self?.deactivateLabel.alpha = 1
             self?.deactivateLabel.transform = CGAffineTransform(scaleX: 1.1, y: 1.1)
@@ -231,9 +226,6 @@ public final class InspectorOverlayViewController: UIViewController {
     /// and populates the info panel with the view's properties.
     /// - Parameter view: The view to inspect.
     private func selectView(_ view: UIView) {
-        selectedView = view
-        
-        
         highlightLayer?.removeFromSuperlayer()
         removeConstraintsLayers()
         
@@ -270,7 +262,7 @@ public final class InspectorOverlayViewController: UIViewController {
     ///   - view: The selected view.
     ///   - frameInSelf: The view's frame converted to the overlay's coordinate space.
     private func drawConstraintVisualizations(for view: UIView, frameInSelf: CGRect) {
-        let constraintColor = UIColor.systemBlue
+        let constraintColor = configuration.annotationColor
         
         guard let superView = view.superview else { return }
         let superFrameInSelf = superView.convert(superView.bounds, to: self.view)
@@ -340,7 +332,7 @@ public final class InspectorOverlayViewController: UIViewController {
         lineLayer.lineWidth = 1
         lineLayer.lineDashPattern = [4, 2]
         lineLayer.fillColor = nil
-        self.view.layer.addSublayer(lineLayer)
+        view.layer.addSublayer(lineLayer)
         constraintLayer.append(lineLayer)
         
         
@@ -374,7 +366,7 @@ public final class InspectorOverlayViewController: UIViewController {
         capLayer.path = path.cgPath
         capLayer.strokeColor = color.cgColor
         capLayer.lineWidth = 1
-        self.view.layer.addSublayer(capLayer)
+        view.layer.addSublayer(capLayer)
         constraintLayer.append(capLayer)
         
     }
@@ -402,7 +394,7 @@ public final class InspectorOverlayViewController: UIViewController {
             width: labelSize.width,
             height: labelSize.height
         )
-        self.view.layer.addSublayer(textLayer)
+        view.layer.addSublayer(textLayer)
         constraintLayer.append(textLayer)
     }
 }

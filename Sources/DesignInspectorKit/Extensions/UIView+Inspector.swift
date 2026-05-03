@@ -9,7 +9,7 @@ import UIKit
 extension UIView {
     
     
-    /// Returns a flat array containing the view and all of its subviews recursively.
+    /// Returns a flat array of all subviews recursively. Does not include the receiver itself.
     public func allSubviews() -> [UIView] {
         var result = subviews
         for subview in subviews {
@@ -102,7 +102,7 @@ extension UIView {
     public var spacingToSuperView: UIEdgeInsets? {
         guard let superview = superview else { return nil }
         
-     return UIEdgeInsets(
+        return UIEdgeInsets(
             top: frame.minY,
             left: frame.minX,
             bottom: superview.bounds.height - frame.maxY,

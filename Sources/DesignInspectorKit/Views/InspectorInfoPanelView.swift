@@ -67,13 +67,12 @@ final class InspectorInfoPanelView: UIView {
     }
     
     required init?(coder: NSCoder) {
-        fatalError("")
+        fatalError("init(coder:) has not been implemented")
     }
     
     private func setupUI() {
         backgroundColor = configuration.annotationColor.withAlphaComponent(0.15)
         layer.cornerRadius = Layout.cornerRadius
-        clipsToBounds = true
         addSubview(scrollView)
 
         scrollView.addSubview(containerView)
@@ -131,7 +130,7 @@ final class InspectorInfoPanelView: UIView {
         }
 
         if let renderedSize = info.imageRenderedSize, renderedSize.width > 0 && renderedSize.height > 0 {
-            addInfoRow(label: InspectorKey.imageSize, value: "\(Int(renderedSize.width)) x \(Int(renderedSize.height)) pt")
+            addInfoRow(label: InspectorKey.imageRenderedSize, value: "\(Int(renderedSize.width)) x \(Int(renderedSize.height)) pt")
         }
 
         if let contentMode = info.contentMode {
@@ -203,21 +202,21 @@ final class InspectorInfoPanelView: UIView {
 
         // MARK: UIStackView
         if let axis = info.stackAxis {
-            addInfoRow(label: "Axis", value: axis == .horizontal ? "Horizontal" : "Vertical")
+            addInfoRow(label: InspectorKey.stackAxis, value: axis == .horizontal ? "Horizontal" : "Vertical")
         }
         if let distribution = info.stackDistribution {
-            addInfoRow(label: "Distribution", value: stackDistributionName(distribution))
+            addInfoRow(label: InspectorKey.stackDistribution, value: stackDistributionName(distribution))
         }
         if let alignment = info.stackAlignment {
-            addInfoRow(label: "Alignment", value: stackAlignmentName(alignment))
+            addInfoRow(label: InspectorKey.stackAlignment, value: stackAlignmentName(alignment))
         }
 
         // MARK: UIScrollView
         if let contentSize = info.scrollContentSize {
-            addInfoRow(label: "Content Size", value: "\(Int(contentSize.width)) x \(Int(contentSize.height)) pt")
+            addInfoRow(label: InspectorKey.scrollContentSize, value: "\(Int(contentSize.width)) x \(Int(contentSize.height)) pt")
         }
         if let paging = info.scrollIsPagingEnabled {
-            addInfoRow(label: "Paging", value: paging ? "Enabled" : "Disabled")
+            addInfoRow(label: InspectorKey.scrollPaging, value: paging ? "Enabled" : "Disabled")
         }
         if let insets = info.contentInsets {
             addInfoRow(label: InspectorKey.contentInsets, value: "T:\(Int(insets.top)) L:\(Int(insets.left)) B:\(Int(insets.bottom)) R:\(Int(insets.right))")
@@ -225,32 +224,32 @@ final class InspectorInfoPanelView: UIView {
 
         // MARK: UISwitch
         if let isOn = info.switchIsOn {
-            addInfoRow(label: "Is On", value: isOn ? "true" : "false")
+            addInfoRow(label: InspectorKey.switchIsOn, value: isOn ? "true" : "false")
         }
         if let onTint = info.switchOnTintColor {
-            addInfoRow(label: "On Tint", value: onTint.hexString, color: onTint)
+            addInfoRow(label: InspectorKey.switchOnTint, value: onTint.hexString, color: onTint)
         }
         if let thumbTint = info.switchThumbTintColor {
-            addInfoRow(label: "Thumb Tint", value: thumbTint.hexString, color: thumbTint)
+            addInfoRow(label: InspectorKey.switchThumbTint, value: thumbTint.hexString, color: thumbTint)
         }
 
         // MARK: UISlider
         if let sliderValue = info.sliderValue, let minVal = info.sliderMinValue, let maxVal = info.sliderMaxValue {
-            addInfoRow(label: "Value", value: String(format: "%.2f", sliderValue))
-            addInfoRow(label: "Range", value: "\(minVal) – \(maxVal)")
+            addInfoRow(label: InspectorKey.sliderValue, value: String(format: "%.2f", sliderValue))
+            addInfoRow(label: InspectorKey.sliderRange, value: "\(minVal) – \(maxVal)")
         }
 
         // MARK: UIProgressView
         if let progress = info.progressValue {
-            addInfoRow(label: "Progress", value: String(format: "%.0f%%", progress * 100))
+            addInfoRow(label: InspectorKey.progressValue, value: String(format: "%.0f%%", progress * 100))
         }
         if let progressTint = info.progressTintColor {
-            addInfoRow(label: "Progress Tint", value: progressTint.hexString, color: progressTint)
+            addInfoRow(label: InspectorKey.progressTint, value: progressTint.hexString, color: progressTint)
         }
 
         // MARK: UIActivityIndicatorView
         if let animating = info.activityIsAnimating {
-            addInfoRow(label: "Animating", value: animating ? "true" : "false")
+            addInfoRow(label: InspectorKey.activityAnimating, value: animating ? "true" : "false")
         }
 
         // MARK: Layout Margins
@@ -333,8 +332,9 @@ final class InspectorInfoPanelView: UIView {
                 
                 labelView.leadingAnchor.constraint(equalTo: swatchView.trailingAnchor, constant: Layout.spacing),
                 labelView.topAnchor.constraint(equalTo: rowView.topAnchor),
+                labelView.bottomAnchor.constraint(equalTo: rowView.bottomAnchor),
                 labelView.widthAnchor.constraint(greaterThanOrEqualToConstant: Layout.labelWidth),
-                
+
                 valueView.leadingAnchor.constraint(equalTo: labelView.trailingAnchor, constant: Layout.spacing),
                 valueView.topAnchor.constraint(equalTo: rowView.topAnchor),
                 valueView.trailingAnchor.constraint(equalTo: rowView.trailingAnchor),

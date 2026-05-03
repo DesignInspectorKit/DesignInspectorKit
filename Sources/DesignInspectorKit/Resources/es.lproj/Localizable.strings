@@ -58,6 +58,31 @@
 "inspector.subviews_count" = "Subvistas";
 "inspector.depth" = "Profundidad";
 
+/* UIStackView */
+"inspector.stack_axis" = "Eje";
+"inspector.stack_distribution" = "Distribución";
+"inspector.stack_alignment" = "Alineación";
+
+/* UIScrollView */
+"inspector.scroll_content_size" = "Tamaño del Contenido";
+"inspector.scroll_paging" = "Paginación";
+
+/* UISwitch */
+"inspector.switch_is_on" = "Activado";
+"inspector.switch_on_tint" = "Color Activo";
+"inspector.switch_thumb_tint" = "Color del Thumb";
+
+/* UISlider */
+"inspector.slider_value" = "Valor";
+"inspector.slider_range" = "Rango";
+
+/* UIProgressView */
+"inspector.progress_value" = "Progreso";
+"inspector.progress_tint" = "Color del Progreso";
+
+/* UIActivityIndicatorView */
+"inspector.activity_animating" = "Animando";
+
 /* Restricciones */
 "inspector.constraints" = "Restricciones";
 "inspector.constraint_active" = "Activa";
