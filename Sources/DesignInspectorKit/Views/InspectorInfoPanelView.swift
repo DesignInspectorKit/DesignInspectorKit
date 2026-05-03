@@ -305,9 +305,6 @@ final class InspectorInfoPanelView: UIView {
             }
         }
 
-        // MARK: Hierarchy
-        addInfoRow(label: InspectorKey.subviewsCount, value: "\(info.subviewsCount)")
-        addInfoRow(label: InspectorKey.depth, value: "\(info.depth)")
     }
     
     /// Appends a labeled row to the content stack.
