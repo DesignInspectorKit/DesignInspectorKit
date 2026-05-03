@@ -46,7 +46,7 @@ final class DesignInspectorSwizzler {
     }
 }
 
-extension UIViewController  {
+extension UIViewController {
     
     private enum SwizzlingKey {
         static var inspectorEnableKey: UInt8 = 0

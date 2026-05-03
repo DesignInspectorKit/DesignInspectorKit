@@ -25,7 +25,7 @@ public final class DesignInspector {
     private init() {}
     
     /// Enables the inspector globally by swizzling `viewDidAppear` on `UIViewController`.
-    /// After calling this, a long press on any screen will present the inspector overlay.
+    /// After calling this, a two-finger tap on any screen will present the inspector overlay.
     public func enable() {
         isEnabled = true
         DesignInspectorSwizzler.shared.enableGlobalSwizzling()
@@ -42,7 +42,10 @@ public final class DesignInspector {
     public func inspect(viewController: UIViewController) {
         guard isEnabled else { return }
         
+        let navBar = (viewController as? UINavigationController)?.navigationBar
+            ?? viewController.navigationController?.navigationBar
         let inspectVC = InspectorOverlayViewController(targetView: viewController.view,
+                                                      navigationBar: navBar,
                                                       configuration: configuration)
         
         inspectVC.modalPresentationStyle = .overFullScreen

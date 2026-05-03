@@ -48,10 +48,7 @@ extension UIViewController {
     }
     
     @objc private func handleInspectorGesture(_ gesture: UITapGestureRecognizer) {
-        guard gesture.state == .ended else { return }
         showDesignInspector()
     }
-        
+
 }
-
-

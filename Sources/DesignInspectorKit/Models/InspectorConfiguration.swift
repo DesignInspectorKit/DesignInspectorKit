@@ -16,7 +16,7 @@ public struct InspectorConfiguration {
     
     /// The color used to highlight the selected view's frame.
     public var highlightColor: UIColor
-    /// The color used for spacing annotation lines and labels.
+    /// The color used for spacing annotation lines, labels, the info panel background tint, and the panel close button.
     public var annotationColor: UIColor
     /// The background color of the info panel.
     public var panelBackgroundColor: UIColor

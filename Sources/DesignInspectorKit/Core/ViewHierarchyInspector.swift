@@ -62,12 +62,12 @@ public final class ViewHierarchyInspector {
         let textColorToken = textProps.textColor.flatMap { configuration.colorTokenResolver?($0) }
         let fontToken = textProps.font.flatMap { configuration.fontTokenResolver?($0) }
         let spacingToken = layoutProps.spacing.flatMap { configuration.stackSpacingTokenResolver?($0) }
-        let frameInWindows = view.superview?.convert(view.frame, to: nil) ?? view.frame
+        let frameInWindow = view.superview?.convert(view.frame, to: nil) ?? view.frame
         
         return ViewInspectorInfo(
             className: String(describing: type(of: view)),
             frame: view.frame,
-            frameInWindow: frameInWindows,
+            frameInWindow: frameInWindow,
             depth: depth,
             backgroundColor: view.backgroundColor,
             backgroundColorToken: backgroundColorToken,
@@ -123,7 +123,6 @@ public final class ViewHierarchyInspector {
             subviewsCount: view.subviews.count,
             view: view)
     }
-    
     
     private struct TextProperties {
         var text: String?
@@ -271,7 +270,6 @@ public final class ViewHierarchyInspector {
     }
     
     private func extractBorderColor(from view: UIView) -> UIColor? {
-        
         guard let cgColor = view.layer.borderColor else {
             return nil
         }
