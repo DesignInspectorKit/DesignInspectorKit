@@ -18,9 +18,13 @@ final class InspectorInfoPanelView: UIView {
         static let swatchSize: CGFloat = 16
         /// Inset between the panel's own background and the containerView, making the background visible.
         static let panelInset: CGFloat = 6
+        static let closeBtnSize: CGFloat = 28
     }
     
     private let configuration: InspectorConfiguration
+
+    /// Called when the user taps the close button on the panel.
+    var onClose: (() -> Void)?
     
     private lazy var containerView: UIView = {
         let view = UIView()
@@ -34,6 +38,19 @@ final class InspectorInfoPanelView: UIView {
         return view
     }()
     
+    private lazy var closePanelButton: UIButton = {
+        let button = UIButton(type: .system)
+        let image = UIImage(systemName: "xmark.circle.fill",
+                           withConfiguration: UIImage.SymbolConfiguration(pointSize: 18, weight: .medium))
+        button.setImage(image, for: .normal)
+        button.tintColor = configuration.annotationColor
+        button.accessibilityLabel = InspectorKey.close
+        button.accessibilityIdentifier = "inspector_panel_close_button"
+        button.addTarget(self, action: #selector(closePanelTapped), for: .touchUpInside)
+        button.translatesAutoresizingMaskIntoConstraints = false
+        return button
+    }()
+
     private lazy var titleLabel: UILabel = {
         let label = UILabel()
         label.font = .boldSystemFont(ofSize: 16)
@@ -76,6 +93,7 @@ final class InspectorInfoPanelView: UIView {
         addSubview(scrollView)
 
         scrollView.addSubview(containerView)
+        containerView.addSubview(closePanelButton)
         containerView.addSubview(titleLabel)
         containerView.addSubview(contentStackview)
 
@@ -93,9 +111,14 @@ final class InspectorInfoPanelView: UIView {
             containerView.bottomAnchor.constraint(equalTo: scrollView.contentLayoutGuide.bottomAnchor, constant: -Layout.panelInset),
             containerView.widthAnchor.constraint(equalTo: scrollView.frameLayoutGuide.widthAnchor, constant: -Layout.panelInset * 2),
 
+            closePanelButton.topAnchor.constraint(equalTo: containerView.topAnchor, constant: Layout.padding / 2),
+            closePanelButton.trailingAnchor.constraint(equalTo: containerView.trailingAnchor, constant: -Layout.padding / 2),
+            closePanelButton.widthAnchor.constraint(equalToConstant: Layout.closeBtnSize),
+            closePanelButton.heightAnchor.constraint(equalToConstant: Layout.closeBtnSize),
+
             titleLabel.topAnchor.constraint(equalTo: containerView.topAnchor, constant: Layout.padding),
             titleLabel.leadingAnchor.constraint(equalTo: containerView.leadingAnchor, constant: Layout.padding),
-            titleLabel.trailingAnchor.constraint(equalTo: containerView.trailingAnchor, constant: -Layout.padding),
+            titleLabel.trailingAnchor.constraint(equalTo: closePanelButton.leadingAnchor, constant: -Layout.spacing),
 
             contentStackview.topAnchor.constraint(equalTo: titleLabel.bottomAnchor, constant: Layout.spacing),
             contentStackview.leadingAnchor.constraint(equalTo: containerView.leadingAnchor, constant: Layout.padding),
@@ -104,6 +127,10 @@ final class InspectorInfoPanelView: UIView {
         ])
     }
     
+    @objc private func closePanelTapped() {
+        onClose?()
+    }
+
     /// Populates the panel with data from the given `ViewInspectorInfo`.
     /// Clears any previously displayed content before rendering.
     /// - Parameter info: The inspected view's property snapshot.

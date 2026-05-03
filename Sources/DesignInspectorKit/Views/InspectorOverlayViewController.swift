@@ -67,6 +67,15 @@ public final class InspectorOverlayViewController: UIViewController {
         panel.accessibilityHint = "Swipe up to dismiss"
         panel.isHidden = true
         panel.translatesAutoresizingMaskIntoConstraints = false
+        panel.onClose = { [weak self] in
+            UIView.animate(withDuration: 0.2) {
+                self?.infoPanel.alpha = 0
+            } completion: { _ in
+                self?.infoPanel.isHidden = true
+                self?.highlightLayer?.removeFromSuperlayer()
+                self?.removeConstraintsLayers()
+            }
+        }
         return panel
     }()
     
