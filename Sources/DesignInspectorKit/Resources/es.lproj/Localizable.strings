@@ -2,7 +2,7 @@
 "inspector.title" = "Inspector";
 "inspector.close" = "Cerrar";
 "inspector.tap_to_inspect" = "Toca para inspeccionar";
-"inspector.long_press_to_exit" = "Mantén presionado para salir";
+"inspector.long_press_to_exit" = "Toca × para salir del inspector";
 
 /* Propiedades de la Vista */
 "inspector.frame" = "Frame";

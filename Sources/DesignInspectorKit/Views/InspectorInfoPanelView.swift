@@ -30,7 +30,7 @@ final class InspectorInfoPanelView: UIView {
         let view = UIView()
         view.backgroundColor = configuration.panelBackgroundColor
         view.layer.cornerRadius = Layout.cornerRadius
-        view.layer.shadowColor = UIColor.systemRed.cgColor
+        view.layer.shadowColor = configuration.annotationColor.cgColor
         view.layer.shadowOpacity = 0.6
         view.layer.shadowOffset = CGSize(width: 0, height: 4)
         view.layer.shadowRadius = 8
@@ -71,7 +71,6 @@ final class InspectorInfoPanelView: UIView {
         let scroll = UIScrollView()
         scroll.translatesAutoresizingMaskIntoConstraints = false
         scroll.showsVerticalScrollIndicator = true
-        scroll.alwaysBounceVertical = true
         return scroll
     }()
     

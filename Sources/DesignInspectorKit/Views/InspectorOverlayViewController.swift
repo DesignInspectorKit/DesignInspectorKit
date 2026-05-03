@@ -27,7 +27,7 @@ public final class InspectorOverlayViewController: UIViewController {
     private let navigationBar: UINavigationBar?
     private let configuration: InspectorConfiguration
     private var highlightLayer: CAShapeLayer?
-    private var constraintLayer: [CALayer] = []
+    private var spacingLayers: [CALayer] = []
     private var isClosing = false
     
     private lazy var instructionLabel: UILabel = {
@@ -208,7 +208,6 @@ public final class InspectorOverlayViewController: UIViewController {
                     self?.dismiss(animated: true, completion: nil)
                 }
             }
-            
         }
     }
     
@@ -239,7 +238,7 @@ public final class InspectorOverlayViewController: UIViewController {
         removeConstraintsLayers()
         
         let frameInSelf = view.convert(view.bounds, to: self.view)
-        
+
         let layer = CAShapeLayer()
         layer.path = UIBezierPath(rect: frameInSelf).cgPath
         layer.fillColor = configuration.highlightColor.cgColor
@@ -247,23 +246,22 @@ public final class InspectorOverlayViewController: UIViewController {
         layer.lineWidth = 1
         self.view.layer.addSublayer(layer)
         highlightLayer = layer
-        
+
         drawConstraintVisualizations(for: view, frameInSelf: frameInSelf)
-        
+
         let inspector = ViewHierarchyInspector(configuration: configuration)
         let info = inspector.inspectSingle(view)
         infoPanel.configure(with: info)
-        infoPanel.isHidden = false
-        
         infoPanel.alpha = 0
+        infoPanel.isHidden = false
         UIView.animate(withDuration: 0.3) { [weak self] in
             self?.infoPanel.alpha = 1
         }
     }
     
     private func removeConstraintsLayers() {
-        constraintLayer.forEach { $0.removeFromSuperlayer() }
-        constraintLayer.removeAll()
+        spacingLayers.forEach { $0.removeFromSuperlayer() }
+        spacingLayers.removeAll()
     }
     
     /// Draws dashed spacing lines from the selected view's edges to its superview's edges.
@@ -342,9 +340,8 @@ public final class InspectorOverlayViewController: UIViewController {
         lineLayer.lineDashPattern = [4, 2]
         lineLayer.fillColor = nil
         view.layer.addSublayer(lineLayer)
-        constraintLayer.append(lineLayer)
-        
-        
+        spacingLayers.append(lineLayer)
+
         let capLength: CGFloat = 6
         if isVertical {
             drawCap(at: start, horizontal: true, length: capLength, color: color)
@@ -362,8 +359,7 @@ public final class InspectorOverlayViewController: UIViewController {
     private func drawCap(at point: CGPoint, horizontal: Bool, length: CGFloat, color: UIColor) {
         let capLayer = CAShapeLayer()
         let path = UIBezierPath()
-        
-        
+
         if horizontal {
             path.move(to: CGPoint(x: point.x - length / 2, y: point.y))
             path.addLine(to: CGPoint(x: point.x + length / 2, y: point.y))
@@ -376,8 +372,7 @@ public final class InspectorOverlayViewController: UIViewController {
         capLayer.strokeColor = color.cgColor
         capLayer.lineWidth = 1
         view.layer.addSublayer(capLayer)
-        constraintLayer.append(capLayer)
-        
+        spacingLayers.append(capLayer)
     }
     
     /// Draws a small pill-shaped label showing the spacing value at the midpoint of a line.
@@ -404,6 +399,6 @@ public final class InspectorOverlayViewController: UIViewController {
             height: labelSize.height
         )
         view.layer.addSublayer(textLayer)
-        constraintLayer.append(textLayer)
+        spacingLayers.append(textLayer)
     }
 }

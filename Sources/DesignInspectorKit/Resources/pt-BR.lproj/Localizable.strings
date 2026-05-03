@@ -2,7 +2,7 @@
 "inspector.title" = "Inspetor";
 "inspector.close" = "Fechar";
 "inspector.tap_to_inspect" = "Toque em qualquer view para inspecionar";
-"inspector.long_press_to_exit" = "Pressione para sair do inspetor";
+"inspector.long_press_to_exit" = "Toque × para sair do inspetor";
 
 /* Propriedades da View */
 "inspector.frame" = "Frame";
