@@ -1,7 +1,16 @@
 import UIKit
 
-/// Demonstrates inspector on UILabel and UIButton components.
+/// Demonstrates inspector on `UILabel` and `UIButton` components.
+///
+/// Tap with 2 fingers to open the overlay, then tap any view below to inspect:
+/// - `titleLabel`    — bold, large font, accessibilityIdentifier set
+/// - `subtitleLabel` — multiline, secondary color
+/// - `primaryButton` — filled style, cornerRadius, accessibilityLabel
+/// - `secondaryButton` — outlined style, borderWidth + borderColor
+/// - `badgeLabel`    — fixed size, clipsToBounds, red background
 final class TextExampleViewController: UIViewController {
+
+    // MARK: - Lifecycle
 
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -10,7 +19,10 @@ final class TextExampleViewController: UIViewController {
         setupViews()
     }
 
+    // MARK: - Setup
+
     private func setupViews() {
+        // Root vertical stack that centers all example views on screen.
         let stack = UIStackView()
         stack.axis = .vertical
         stack.spacing = 24
@@ -25,19 +37,22 @@ final class TextExampleViewController: UIViewController {
             stack.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: -24),
         ])
 
+        // MARK: UILabel — large bold title
         let titleLabel = UILabel()
         titleLabel.text = "Design Inspector"
         titleLabel.font = .boldSystemFont(ofSize: 28)
         titleLabel.textColor = .label
         titleLabel.accessibilityIdentifier = "title_label"
 
+        // MARK: UILabel — multiline subtitle
         let subtitleLabel = UILabel()
-        subtitleLabel.text = "Long press anywhere to inspect views"
+        subtitleLabel.text = "Tap with 2 fingers anywhere to inspect views"
         subtitleLabel.font = .systemFont(ofSize: 16)
         subtitleLabel.textColor = .secondaryLabel
         subtitleLabel.numberOfLines = 0
         subtitleLabel.textAlignment = .center
 
+        // MARK: UIButton — filled primary style
         let primaryButton = UIButton(type: .system)
         primaryButton.setTitle("Primary Action", for: .normal)
         primaryButton.titleLabel?.font = .boldSystemFont(ofSize: 17)
@@ -48,6 +63,7 @@ final class TextExampleViewController: UIViewController {
         primaryButton.accessibilityIdentifier = "primary_button"
         primaryButton.accessibilityLabel = "Primary action button"
 
+        // MARK: UIButton — outlined secondary style
         let secondaryButton = UIButton(type: .system)
         secondaryButton.setTitle("Secondary", for: .normal)
         secondaryButton.titleLabel?.font = .systemFont(ofSize: 15)
@@ -57,6 +73,7 @@ final class TextExampleViewController: UIViewController {
         secondaryButton.layer.cornerRadius = 8
         secondaryButton.contentEdgeInsets = UIEdgeInsets(top: 8, left: 16, bottom: 8, right: 16)
 
+        // MARK: UILabel — badge with fixed size and clipped corners
         let badgeLabel = UILabel()
         badgeLabel.text = "NEW"
         badgeLabel.font = .boldSystemFont(ofSize: 11)

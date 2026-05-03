@@ -1,7 +1,15 @@
 import UIKit
 
-/// Demonstrates inspector on UIStackView with different axis, distribution and alignment.
+/// Demonstrates inspector on `UIStackView` with different axis, distribution and alignment.
+///
+/// Two stack views are shown:
+/// - Horizontal stack with `fillEqually` distribution
+/// - Vertical stack with `equalSpacing` distribution and `center` alignment
+///
+/// Inspect each stack to see axis, distribution, alignment and spacing in the panel.
 final class StackViewExampleViewController: UIViewController {
+
+    // MARK: - Lifecycle
 
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -10,7 +18,10 @@ final class StackViewExampleViewController: UIViewController {
         setupViews()
     }
 
+    // MARK: - Setup
+
     private func setupViews() {
+        // Root stack that holds section labels and the two example stacks.
         let root = UIStackView()
         root.axis = .vertical
         root.spacing = 32
@@ -24,13 +35,18 @@ final class StackViewExampleViewController: UIViewController {
             root.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: -24),
         ])
 
+        // Section 1: horizontal stack
         root.addArrangedSubview(makeSectionLabel("Horizontal · Fill Equally · spacing 8"))
         root.addArrangedSubview(makeHorizontalStack())
 
+        // Section 2: vertical stack
         root.addArrangedSubview(makeSectionLabel("Vertical · Equal Spacing · Center"))
         root.addArrangedSubview(makeVerticalStack())
     }
 
+    // MARK: - Helpers
+
+    /// Creates a small section header label.
     private func makeSectionLabel(_ text: String) -> UILabel {
         let label = UILabel()
         label.text = text
@@ -39,6 +55,7 @@ final class StackViewExampleViewController: UIViewController {
         return label
     }
 
+    /// Horizontal stack — `fillEqually` distributes the three colored boxes evenly.
     private func makeHorizontalStack() -> UIStackView {
         let stack = UIStackView()
         stack.axis = .horizontal
@@ -46,6 +63,7 @@ final class StackViewExampleViewController: UIViewController {
         stack.alignment = .fill
         stack.spacing = 8
 
+        // Three boxes with different colors to make individual views easy to tap.
         let colors: [UIColor] = [.systemBlue, .systemGreen, .systemOrange]
         colors.forEach { color in
             let box = UIView()
@@ -57,6 +75,7 @@ final class StackViewExampleViewController: UIViewController {
         return stack
     }
 
+    /// Vertical stack — `equalSpacing` keeps uniform gaps between boxes of different sizes.
     private func makeVerticalStack() -> UIStackView {
         let stack = UIStackView()
         stack.axis = .vertical
@@ -64,6 +83,7 @@ final class StackViewExampleViewController: UIViewController {
         stack.alignment = .center
         stack.spacing = 12
 
+        // Boxes with varying sizes to illustrate equalSpacing behaviour.
         let sizes: [CGFloat] = [44, 56, 36]
         let colors: [UIColor] = [.systemPurple, .systemTeal, .systemPink]
         zip(sizes, colors).forEach { size, color in

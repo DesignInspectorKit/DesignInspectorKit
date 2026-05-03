@@ -1,7 +1,15 @@
 import UIKit
 
-/// Demonstrates inspector on views with accessibility properties configured.
+/// Demonstrates inspector on views with rich accessibility configuration.
+///
+/// Inspect each view to see:
+/// - `accessibilityIdentifier` — used for UI testing
+/// - `accessibilityLabel`      — read by VoiceOver
+/// - `accessibilityTraits`     — semantic role (header, button, etc.)
+/// - `isAccessibilityElement`  — whether VoiceOver focuses the view
 final class AccessibilityExampleViewController: UIViewController {
+
+    // MARK: - Lifecycle
 
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -9,6 +17,8 @@ final class AccessibilityExampleViewController: UIViewController {
         view.backgroundColor = .systemBackground
         setupViews()
     }
+
+    // MARK: - Setup
 
     private func setupViews() {
         let stack = UIStackView()
@@ -24,7 +34,7 @@ final class AccessibilityExampleViewController: UIViewController {
             stack.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: -24),
         ])
 
-        // Label with accessibility
+        // MARK: UILabel — marked as .header trait for VoiceOver navigation
         let titleLabel = UILabel()
         titleLabel.text = "Welcome banner"
         titleLabel.font = .boldSystemFont(ofSize: 22)
@@ -35,7 +45,7 @@ final class AccessibilityExampleViewController: UIViewController {
         titleLabel.isAccessibilityElement = true
         stack.addArrangedSubview(titleLabel)
 
-        // Button with accessibility
+        // MARK: UIButton — explicit .button trait and custom accessibilityLabel
         let actionButton = UIButton(type: .system)
         actionButton.setTitle("Continue", for: .normal)
         actionButton.titleLabel?.font = .boldSystemFont(ofSize: 17)
@@ -48,7 +58,7 @@ final class AccessibilityExampleViewController: UIViewController {
         actionButton.accessibilityTraits = .button
         stack.addArrangedSubview(actionButton)
 
-        // Image with accessibility
+        // MARK: UIImageView — isAccessibilityElement = true so VoiceOver reads the label
         let iconImageView = UIImageView(image: UIImage(systemName: "checkmark.seal.fill"))
         iconImageView.tintColor = .systemGreen
         iconImageView.contentMode = .scaleAspectFit
@@ -58,16 +68,16 @@ final class AccessibilityExampleViewController: UIViewController {
         iconImageView.isAccessibilityElement = true
         stack.addArrangedSubview(iconImageView)
 
-        // Non-accessible decorative view
+        // MARK: UIView — decorative divider, explicitly excluded from accessibility tree
         let decorView = UIView()
         decorView.backgroundColor = .systemFill
         decorView.layer.cornerRadius = 8
         decorView.heightAnchor.constraint(equalToConstant: 4).isActive = true
-        decorView.isAccessibilityElement = false
+        decorView.isAccessibilityElement = false // VoiceOver skips this view
         decorView.accessibilityIdentifier = "divider_line"
         stack.addArrangedSubview(decorView)
 
-        // TextField
+        // MARK: UITextField — identifier + label for UI test targeting
         let textField = UITextField()
         textField.placeholder = "Enter your name"
         textField.borderStyle = .roundedRect

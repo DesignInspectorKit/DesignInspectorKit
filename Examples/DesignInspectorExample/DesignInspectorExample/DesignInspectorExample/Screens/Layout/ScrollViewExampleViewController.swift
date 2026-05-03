@@ -1,7 +1,13 @@
 import UIKit
 
-/// Demonstrates inspector on UIScrollView with large content size.
+/// Demonstrates inspector on `UIScrollView` with a tall content area.
+///
+/// Nine colored cards are stacked vertically inside the scroll view.
+/// Inspect the scroll view itself to see: contentSize, contentInset, isPagingEnabled.
+/// Inspect individual cards to see frame, backgroundColor, cornerRadius.
 final class ScrollViewExampleViewController: UIViewController {
+
+    // MARK: - Lifecycle
 
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -10,7 +16,10 @@ final class ScrollViewExampleViewController: UIViewController {
         setupViews()
     }
 
+    // MARK: - Setup
+
     private func setupViews() {
+        // Scroll view fills the safe area.
         let scrollView = UIScrollView()
         scrollView.isPagingEnabled = false
         scrollView.contentInset = UIEdgeInsets(top: 16, left: 16, bottom: 16, right: 16)
@@ -25,6 +34,8 @@ final class ScrollViewExampleViewController: UIViewController {
             scrollView.bottomAnchor.constraint(equalTo: view.bottomAnchor),
         ])
 
+        // Content stack anchored to the scroll view's contentLayoutGuide so it
+        // can grow taller than the visible frame and enable vertical scrolling.
         let content = UIStackView()
         content.axis = .vertical
         content.spacing = 16
@@ -36,9 +47,11 @@ final class ScrollViewExampleViewController: UIViewController {
             content.leadingAnchor.constraint(equalTo: scrollView.contentLayoutGuide.leadingAnchor),
             content.trailingAnchor.constraint(equalTo: scrollView.contentLayoutGuide.trailingAnchor),
             content.bottomAnchor.constraint(equalTo: scrollView.contentLayoutGuide.bottomAnchor),
+            // Pin width to frame layout guide to prevent horizontal scrolling.
             content.widthAnchor.constraint(equalTo: scrollView.frameLayoutGuide.widthAnchor, constant: -32),
         ])
 
+        // Nine spectrum-like colors, each becoming a tappable card.
         let colors: [UIColor] = [
             .systemRed, .systemOrange, .systemYellow,
             .systemGreen, .systemBlue, .systemIndigo,
@@ -46,6 +59,7 @@ final class ScrollViewExampleViewController: UIViewController {
         ]
 
         colors.enumerated().forEach { index, color in
+            // Each card has a tinted background, rounded corners and a colored border.
             let card = UIView()
             card.backgroundColor = color.withAlphaComponent(0.25)
             card.layer.cornerRadius = 16

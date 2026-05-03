@@ -1,7 +1,15 @@
 import UIKit
 
-/// Demonstrates inspector on UISwitch, UISlider, UIProgressView and UIActivityIndicatorView.
+/// Demonstrates inspector on UIKit control views.
+///
+/// Each row pairs a descriptive label with a control:
+/// - `UISwitch`  — isOn, onTintColor
+/// - `UISlider`  — value, minimumValue, maximumValue
+/// - `UIProgressView` — progress, progressTintColor
+/// - `UIActivityIndicatorView` — isAnimating, color
 final class ControlsExampleViewController: UIViewController {
+
+    // MARK: - Lifecycle
 
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -10,7 +18,10 @@ final class ControlsExampleViewController: UIViewController {
         setupViews()
     }
 
+    // MARK: - Setup
+
     private func setupViews() {
+        // Vertical stack holding all control rows.
         let stack = UIStackView()
         stack.axis = .vertical
         stack.spacing = 32
@@ -24,23 +35,25 @@ final class ControlsExampleViewController: UIViewController {
             stack.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: -32),
         ])
 
-        // UISwitch
+        // MARK: UISwitch — toggled ON
         stack.addArrangedSubview(makeRow(label: "UISwitch (on)") {
             let sw = UISwitch()
             sw.isOn = true
             sw.onTintColor = .systemGreen
-            sw.accessibilityIdentifier = "example_switch"
+            sw.accessibilityIdentifier = "example_switch_on"
             return sw
         })
 
+        // MARK: UISwitch — toggled OFF
         stack.addArrangedSubview(makeRow(label: "UISwitch (off)") {
             let sw = UISwitch()
             sw.isOn = false
             sw.onTintColor = .systemBlue
+            sw.accessibilityIdentifier = "example_switch_off"
             return sw
         })
 
-        // UISlider
+        // MARK: UISlider — range 0–100, current value 42
         stack.addArrangedSubview(makeRow(label: "UISlider (0–100, value 42)") {
             let slider = UISlider()
             slider.minimumValue = 0
@@ -51,7 +64,7 @@ final class ControlsExampleViewController: UIViewController {
             return slider
         })
 
-        // UIProgressView
+        // MARK: UIProgressView — 75% progress
         stack.addArrangedSubview(makeRow(label: "UIProgressView (75%)") {
             let progress = UIProgressView(progressViewStyle: .default)
             progress.progress = 0.75
@@ -60,7 +73,7 @@ final class ControlsExampleViewController: UIViewController {
             return progress
         })
 
-        // UIActivityIndicatorView
+        // MARK: UIActivityIndicatorView — actively animating
         stack.addArrangedSubview(makeRow(label: "UIActivityIndicatorView") {
             let activity = UIActivityIndicatorView(style: .medium)
             activity.startAnimating()
@@ -70,6 +83,12 @@ final class ControlsExampleViewController: UIViewController {
         })
     }
 
+    // MARK: - Helpers
+
+    /// Builds a horizontal row with a text label on the left and a control on the right.
+    /// - Parameters:
+    ///   - text: Description label text.
+    ///   - maker: Closure that creates and returns the control view.
     private func makeRow(label text: String, control maker: () -> UIView) -> UIView {
         let row = UIStackView()
         row.axis = .horizontal
@@ -81,6 +100,7 @@ final class ControlsExampleViewController: UIViewController {
         label.font = .systemFont(ofSize: 14)
         label.textColor = .secondaryLabel
         label.numberOfLines = 0
+        // Label fills available space; control keeps its intrinsic size.
         label.setContentHuggingPriority(.defaultLow, for: .horizontal)
 
         let control = maker()

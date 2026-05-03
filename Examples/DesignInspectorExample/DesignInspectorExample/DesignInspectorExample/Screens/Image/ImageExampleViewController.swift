@@ -1,7 +1,12 @@
 import UIKit
 
-/// Demonstrates inspector on UIImageView components.
+/// Demonstrates inspector on `UIImageView` components.
+///
+/// Three image views are shown, each with a different `contentMode`.
+/// Inspect them to see: imageName, intrinsicContentSize, renderedSize, contentMode, tintColor.
 final class ImageExampleViewController: UIViewController {
+
+    // MARK: - Lifecycle
 
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -10,7 +15,10 @@ final class ImageExampleViewController: UIViewController {
         setupViews()
     }
 
+    // MARK: - Setup
+
     private func setupViews() {
+        // Vertical stack centered on screen holding all image examples.
         let stack = UIStackView()
         stack.axis = .vertical
         stack.spacing = 32
@@ -23,6 +31,7 @@ final class ImageExampleViewController: UIViewController {
             stack.centerYAnchor.constraint(equalTo: view.centerYAnchor),
         ])
 
+        // MARK: scaleAspectFit — image fits inside bounds, preserving ratio
         let scaleToFillImage = makeImageView(
             systemName: "photo",
             contentMode: .scaleAspectFit,
@@ -31,6 +40,7 @@ final class ImageExampleViewController: UIViewController {
             label: "scaleAspectFit"
         )
 
+        // MARK: scaleAspectFill — image fills bounds, may be clipped
         let scaleFillImage = makeImageView(
             systemName: "star.fill",
             contentMode: .scaleAspectFill,
@@ -39,6 +49,7 @@ final class ImageExampleViewController: UIViewController {
             label: "scaleAspectFill"
         )
 
+        // MARK: center — image drawn at its natural size, centered in bounds
         let centerImage = makeImageView(
             systemName: "heart.fill",
             contentMode: .center,
@@ -52,6 +63,15 @@ final class ImageExampleViewController: UIViewController {
         }
     }
 
+    // MARK: - Helpers
+
+    /// Builds a labeled image view container for the given SF Symbol.
+    /// - Parameters:
+    ///   - systemName: SF Symbol name to use as the image source.
+    ///   - contentMode: The `UIView.ContentMode` to apply.
+    ///   - size: Fixed width/height for the image view.
+    ///   - tint: Tint color for the symbol and background wash.
+    ///   - label: Caption text shown below the image view.
     private func makeImageView(
         systemName: String,
         contentMode: UIView.ContentMode,
@@ -59,6 +79,7 @@ final class ImageExampleViewController: UIViewController {
         tint: UIColor,
         label: String
     ) -> UIView {
+        // Vertical container: image on top, caption below.
         let container = UIStackView()
         container.axis = .vertical
         container.spacing = 8
@@ -76,6 +97,7 @@ final class ImageExampleViewController: UIViewController {
         imageView.accessibilityLabel = systemName
         imageView.accessibilityIdentifier = "image_\(systemName)"
 
+        // Caption showing the contentMode name for quick reference.
         let caption = UILabel()
         caption.text = label
         caption.font = .monospacedSystemFont(ofSize: 12, weight: .regular)

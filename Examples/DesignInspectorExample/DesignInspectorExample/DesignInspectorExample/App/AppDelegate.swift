@@ -1,12 +1,9 @@
-//
-//  AppDelegate.swift
-//  DesignInspectorExample
-//
-//
-
 import UIKit
 import DesignInspectorKit
 
+/// App entry point.
+/// Enables the DesignInspector globally so that every UIViewController
+/// automatically receives the two-finger tap gesture to open the inspector overlay.
 @main
 class AppDelegate: UIResponder, UIApplicationDelegate {
 
@@ -14,6 +11,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         _ application: UIApplication,
         didFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey: Any]?
     ) -> Bool {
+        // Enables the inspector on all view controllers via method swizzling.
         DesignInspector.shared.enable()
         return true
     }
@@ -26,4 +24,3 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         UISceneConfiguration(name: "Default Configuration", sessionRole: connectingSceneSession.role)
     }
 }
-
