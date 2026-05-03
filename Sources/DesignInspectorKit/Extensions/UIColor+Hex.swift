@@ -17,9 +17,15 @@ extension UIColor {
         var blue: CGFloat = 0
         var alpha: CGFloat = 0
 
-        let color = cgColor.colorSpace?.model == .rgb
-            ? self
-            : UIColor(cgColor: cgColor.converted(to: CGColorSpace(name: CGColorSpace.sRGB)!, intent: .defaultIntent, options: nil) ?? cgColor)
+        let color: UIColor
+        if cgColor.colorSpace?.model == .rgb {
+            color = self
+        } else if let sRGB = CGColorSpace(name: CGColorSpace.sRGB),
+                  let converted = cgColor.converted(to: sRGB, intent: .defaultIntent, options: nil) {
+            color = UIColor(cgColor: converted)
+        } else {
+            color = self
+        }
         color.getRed(&red, green: &green, blue: &blue, alpha: &alpha)
         
         let r = Int(red * 255)

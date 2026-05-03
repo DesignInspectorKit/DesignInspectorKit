@@ -86,5 +86,5 @@ public struct InspectorConfiguration {
         self.imageTokenResolver = imageTokenResolver
         self.imageAccessibilityLabelResolver = imageAccessibilityLabelResolver
     }
-    
+
 }

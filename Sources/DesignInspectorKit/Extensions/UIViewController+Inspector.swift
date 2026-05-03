@@ -39,6 +39,8 @@ extension UIViewController {
     }
     
     /// Presents the inspector overlay with a custom configuration.
+    /// Unlike `DesignInspector.inspect(viewController:)`, this method does not include
+    /// the navigation bar in the inspectable area — it inspects only `self.view`.
     /// - Parameter configuration: The `InspectorConfiguration` to use for this overlay.
     public func showDesignInspector(with configuration: InspectorConfiguration) {
         let inspectorVC = InspectorOverlayViewController(targetView: view, configuration: configuration)
