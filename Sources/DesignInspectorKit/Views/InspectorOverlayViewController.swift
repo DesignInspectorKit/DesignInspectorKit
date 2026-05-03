@@ -49,9 +49,14 @@ public final class InspectorOverlayViewController: UIViewController {
     
     private lazy var closeButton: UIButton = {
         let button = UIButton(type: .system)
-        let config = UIImage.SymbolConfiguration(pointSize: 28, weight: .semibold)
-        button.setImage(UIImage(systemName: "xmark.circle.fill", withConfiguration: config), for: .normal)
+        button.setImage(UIImage(systemName: "xmark.circle.fill"), for: .normal)
         button.tintColor = .white
+        button.backgroundColor = .systemRed
+        button.layer.cornerRadius = 16
+        button.layer.shadowColor = UIColor.black.cgColor
+        button.layer.shadowOpacity = 0.3
+        button.layer.shadowOffset = CGSize(width: 0, height: 2)
+        button.layer.shadowRadius = 4
         button.accessibilityLabel = InspectorKey.close
         button.accessibilityIdentifier = "inspector_close_button"
         button.addTarget(self, action: #selector(closeButtonTapped), for: .touchUpInside)
