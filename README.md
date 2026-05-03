@@ -85,6 +85,59 @@ The inspector panel shows the following properties for each tapped view:
 | **Sibling Spacing** | Distance to nearest sibling above, below, left, right |
 | **Hierarchy** | Depth level, Subviews count |
 
+## Screenshots
+
+> **To add screenshots:** run the example app on a simulator, capture each screen described below, and save the files to `docs/screenshots/`. The images will appear automatically here.
+
+### Activation
+Tap with 2 fingers on any screen to activate the overlay.
+
+| Before | Overlay active |
+|--------|---------------|
+| ![App screen](docs/screenshots/01_before.png) | ![Overlay active](docs/screenshots/02_overlay.png) |
+
+> **Capture:** Run the example app → navigate to any example screen → take a screenshot before and after the two-finger tap.
+
+---
+
+### Inspecting a view
+Tap any view to highlight it and open the info panel.
+
+| View selected | Info panel |
+|--------------|-----------|
+| ![View selected](docs/screenshots/03_selected.png) | ![Info panel](docs/screenshots/04_panel.png) |
+
+> **Capture:** After activating the overlay → tap a `UILabel` or `UIButton` → screenshot the highlight + panel.
+
+---
+
+### Control inspection
+UISwitch, UISlider, UIProgressView and UIActivityIndicatorView properties.
+
+![Controls](docs/screenshots/05_controls.png)
+
+> **Capture:** Navigate to the **Controls** example → activate overlay → tap the UISwitch.
+
+---
+
+### Accessibility inspection
+`accessibilityLabel`, `accessibilityIdentifier` and `accessibilityTraits`.
+
+![Accessibility](docs/screenshots/06_accessibility.png)
+
+> **Capture:** Navigate to the **Accessibility** example → activate overlay → tap any labeled view.
+
+---
+
+### Spacing annotations
+Blue dashed lines show distances from the selected view to its superview edges.
+
+![Spacing](docs/screenshots/07_spacing.png)
+
+> **Capture:** Navigate to the **Layout / StackView** example → activate overlay → tap a colored box inside the stack.
+
+---
+
 ## Visual Indicators
 
 The inspector overlay uses a consistent color language to communicate different types of information at a glance:
