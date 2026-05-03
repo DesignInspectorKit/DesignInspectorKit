@@ -32,7 +32,9 @@ import DesignInspectorKit
 DesignInspector.shared.enable()
 ```
 
-Once enabled, **long press (2 seconds)** on any screen to activate the overlay, then **tap any view** to inspect it.
+Once enabled, **tap with 2 fingers** on any screen to activate the overlay, then **tap any view** to inspect it.
+
+> **Simulator tip:** Hold **Option ⌥** while clicking to simulate two simultaneous touches.
 
 ### Enable manually on a specific view controller
 
@@ -82,6 +84,18 @@ The inspector panel shows the following properties for each tapped view:
 | **Accessibility** | Identifier, Label, Traits, Is accessibility element |
 | **Sibling Spacing** | Distance to nearest sibling above, below, left, right |
 | **Hierarchy** | Depth level, Subviews count |
+
+## Example App
+
+A fully working example project is included in the repository:
+
+```
+Examples/DesignInspectorExample/
+└── DesignInspectorExample/
+    └── DesignInspectorExample.xcodeproj
+```
+
+See [`Examples/DesignInspectorExample/README.md`](Examples/DesignInspectorExample/README.md) for step-by-step instructions to open and run it.
 
 ## Project Structure
 
