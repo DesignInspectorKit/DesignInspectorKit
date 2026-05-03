@@ -4,7 +4,6 @@
 //
 //
 
-import Foundation
 import UIKit
 
 /// Configuration options for the DesignInspectorKit overlay.
@@ -41,7 +40,7 @@ public struct InspectorConfiguration {
     /// Returns a design token name for a given `UIImage`.
     public var imageTokenResolver: ((UIImage) -> String)?
     /// Returns an accessibility label string for a given `UIImage`.
-    public var imageAcessibilityLabelResolver: ((UIImage) -> String)?
+    public var imageAccessibilityLabelResolver: ((UIImage) -> String)?
     
     public static let `default` = InspectorConfiguration(
         highlightColor: UIColor.systemBlue.withAlphaComponent(0.3),
@@ -55,10 +54,10 @@ public struct InspectorConfiguration {
         fontTokenColorResolver: nil,
         spacingTokenResolver: nil,
         imageTokenResolver: nil,
-        imageAcessibilityLabelResolver: nil
+        imageAccessibilityLabelResolver: nil
     )
     
-    //MARK - Initi
+    // MARK: - Init
     
     public init(
         highlightColor: UIColor = UIColor.systemBlue.withAlphaComponent(0.3),
@@ -72,7 +71,7 @@ public struct InspectorConfiguration {
         fontTokenColorResolver: ((UIFont) -> String)? = nil,
         spacingTokenResolver: ((CGFloat) -> String)? = nil,
         imageTokenResolver: ((UIImage) -> String)? = nil,
-        imageAcessibilityLabelResolver: ((UIImage) -> String)? = nil
+        imageAccessibilityLabelResolver: ((UIImage) -> String)? = nil
     ) {
         self.highlightColor = highlightColor
         self.annotationColor = annotationColor
@@ -85,7 +84,7 @@ public struct InspectorConfiguration {
         self.fontTokenColorResolver = fontTokenColorResolver
         self.spacingTokenResolver = spacingTokenResolver
         self.imageTokenResolver = imageTokenResolver
-        self.imageAcessibilityLabelResolver = imageAcessibilityLabelResolver
+        self.imageAccessibilityLabelResolver = imageAccessibilityLabelResolver
     }
     
 }

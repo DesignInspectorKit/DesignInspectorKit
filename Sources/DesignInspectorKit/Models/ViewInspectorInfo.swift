@@ -4,7 +4,6 @@
 //
 //
 
-import Foundation
 import UIKit
 
 /// A snapshot of all inspectable properties of a `UIView` at the time of inspection.
@@ -151,7 +150,7 @@ public struct ConstraintInfo {
     
     /// A human-readable summary of the constraint.
     public var description: String {
-        return "\(attribute) \(relation) \(constant) @ \(Int(priority)) "
+        return "\(attribute) \(relation) \(constant) @ \(Int(priority))"
     }
     
 }

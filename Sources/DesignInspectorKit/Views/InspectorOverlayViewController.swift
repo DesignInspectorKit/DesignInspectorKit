@@ -4,7 +4,6 @@
 //
 //
 
-import Foundation
 import UIKit
 
 /// A full-screen overlay view controller that allows the user to tap any view
@@ -18,7 +17,6 @@ public final class InspectorOverlayViewController: UIViewController {
         static let padding: CGFloat = 16
         static let topPadding: CGFloat = 12
         static let closeButtonSize: CGFloat = 32
-        static let cornerRadius: CGFloat = 12
         static let instructionWidth: CGFloat = 280
         static let instructionHeight: CGFloat = 50
         static let deactivateWidth: CGFloat = 220
@@ -75,7 +73,7 @@ public final class InspectorOverlayViewController: UIViewController {
     
     private lazy var deactivateLabel: UILabel = {
         let label = UILabel()
-        label.text = "Long press to exit"
+        label.text = InspectorKey.longPressToExit
         label.textColor = .white
         label.font = UIFont.systemFont(ofSize: 16, weight: .semibold)
         label.textAlignment = .center
@@ -213,23 +211,22 @@ public final class InspectorOverlayViewController: UIViewController {
     @objc private func handleTap(_ gesture: UITapGestureRecognizer) {
         guard !isClosing else { return }
         let location = gesture.location(in: view)
-        
+
         if let navBar = navigationBar {
             let locationInNavBar = view.convert(location, to: navBar)
             if navBar.bounds.contains(locationInNavBar),
-               let tappedView = navBar.deepesView(at: locationInNavBar) {
+               let tappedView = navBar.deepestView(at: locationInNavBar) {
                 selectView(tappedView)
                 return
             }
         }
-        
+
         let locationInTarget = view.convert(location, to: targetView)
-        
-        if let tappedView = targetView.deepesView(at: locationInTarget) {
+        if let tappedView = targetView.deepestView(at: locationInTarget) {
             selectView(tappedView)
         }
     }
-    
+
     /// Selects a view for inspection: highlights its frame, draws spacing annotations,
     /// and populates the info panel with the view's properties.
     /// - Parameter view: The view to inspect.

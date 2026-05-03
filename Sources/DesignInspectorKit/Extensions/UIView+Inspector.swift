@@ -22,12 +22,12 @@ extension UIView {
     /// Traverses subviews in reverse order (front to back) to match the visual hit-test order.
     /// - Parameter point: The point in the receiver's coordinate space.
     /// - Returns: The deepest subview containing the point, or `self` if no subview matches.
-    public func deepesView(at point : CGPoint) -> UIView? {
+    public func deepestView(at point: CGPoint) -> UIView? {
         guard bounds.contains(point) else { return nil }
         
         for subview in subviews.reversed() {
             let convertedPoint = convert(point, to: subview)
-            if let found = subview.deepesView(at: convertedPoint) {
+            if let found = subview.deepestView(at: convertedPoint) {
                 return found
             }
         }

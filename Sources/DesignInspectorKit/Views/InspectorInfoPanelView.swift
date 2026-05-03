@@ -4,7 +4,6 @@
 //
 //
 
-import Foundation
 import UIKit
 
 /// A scrollable panel that displays all inspectable properties of a selected view.
@@ -12,8 +11,7 @@ import UIKit
 final class InspectorInfoPanelView: UIView {
     
     private enum Layout {
-        static let maxScrollHeight: CGFloat = 200
-        static let conerRadius: CGFloat = 12
+        static let cornerRadius: CGFloat = 12
         static let padding: CGFloat = 16
         static let spacing: CGFloat = 8
         static let labelWidth: CGFloat = 100
@@ -25,9 +23,7 @@ final class InspectorInfoPanelView: UIView {
     private lazy var containerView: UIView = {
         let view = UIView()
         view.backgroundColor = configuration.panelBackgroundColor
-        view.layer.cornerRadius = Layout.conerRadius
-        view.layer.borderWidth = 2
-        view.layer.borderColor = UIColor.systemRed.cgColor
+        view.layer.cornerRadius = Layout.cornerRadius
         view.layer.shadowColor = UIColor.black.cgColor
         view.layer.shadowOpacity = 0.2
         view.layer.shadowOffset = CGSize(width: 0, height: 4)
@@ -80,18 +76,18 @@ final class InspectorInfoPanelView: UIView {
         containerView.addSubview(contentStackview)
 
         NSLayoutConstraint.activate([
-            // scrollView preenche toda a panel view
+            // scrollView fills the entire panel view
             scrollView.topAnchor.constraint(equalTo: topAnchor),
             scrollView.leadingAnchor.constraint(equalTo: leadingAnchor),
             scrollView.trailingAnchor.constraint(equalTo: trailingAnchor),
             scrollView.bottomAnchor.constraint(equalTo: bottomAnchor),
 
-            // containerView segue o content layout guide do scroll
+            // containerView follows the scroll's content layout guide so it can grow taller than the frame
             containerView.topAnchor.constraint(equalTo: scrollView.contentLayoutGuide.topAnchor),
             containerView.leadingAnchor.constraint(equalTo: scrollView.contentLayoutGuide.leadingAnchor),
             containerView.trailingAnchor.constraint(equalTo: scrollView.contentLayoutGuide.trailingAnchor),
             containerView.bottomAnchor.constraint(equalTo: scrollView.contentLayoutGuide.bottomAnchor),
-            // largura do container = largura do frame do scroll (sem scroll horizontal)
+            // pin width to frame layout guide to prevent horizontal scrolling
             containerView.widthAnchor.constraint(equalTo: scrollView.frameLayoutGuide.widthAnchor),
 
             titleLabel.topAnchor.constraint(equalTo: containerView.topAnchor, constant: Layout.padding),

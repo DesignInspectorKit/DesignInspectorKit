@@ -3,7 +3,7 @@ import UIKit
 /// The main entry point for DesignInspectorKit.
 ///
 /// Use `DesignInspector.shared` to enable or disable the inspector globally.
-/// When enabled, a long press gesture (2 seconds) is automatically attached
+/// When enabled, a two-finger tap gesture is automatically attached
 /// to every view controller, allowing the user to activate the inspection overlay.
 ///
 /// Example:

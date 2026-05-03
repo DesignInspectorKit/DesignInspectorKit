@@ -4,7 +4,6 @@
 //
 //
 
-import Foundation
 import UIKit
 
 private extension NSDirectionalEdgeInsets {
@@ -189,7 +188,7 @@ public final class ViewHierachyInspector {
         
         props.size = CGSize(width: image.size.width, height: image.size.height)
         props.token = configuration.imageTokenResolver?(image)
-        props.accessibilityLabel = configuration.imageAcessibilityLabelResolver?(image) ?? imageView.accessibilityLabel?.nilIfEmpty
+        props.accessibilityLabel = configuration.imageAccessibilityLabelResolver?(image) ?? imageView.accessibilityLabel?.nilIfEmpty
         
         props.name = props.token
         ?? image.accessibilityIdentifier?.nilIfEmpty
