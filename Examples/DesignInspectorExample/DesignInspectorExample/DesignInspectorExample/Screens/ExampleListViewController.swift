@@ -57,6 +57,11 @@ final class ExampleListViewController: UITableViewController {
             subtitle: "Placeholder, style, cancel button, tint",
             maker: { SearchBarExampleViewController() }
         ),
+        Example(
+            title: "UITableView",
+            subtitle: "Cells with image and label — tap to inspect",
+            maker: { TableViewExampleViewController() }
+        ),
     ]
 
     // MARK: - Lifecycle
