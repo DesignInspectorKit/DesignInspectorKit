@@ -232,16 +232,37 @@ public final class InspectorOverlayViewController: UIViewController {
     
     @objc private func handleTap(_ gesture: UITapGestureRecognizer) {
         guard !isClosing else { return }
-        let windowPoint = gesture.location(in: view.window)
 
-        if let navBar = navigationBar,
-           let found = navBar.deepestInspectableView(atWindowPoint: windowPoint) {
-            selectView(found)
-            return
-        }
+        if #available(iOS 19.0, *) {
+            // iOS 19+ (iOS 26): use window-space traversal to penetrate
+            // UITableViewCell, UIListContentView and UISearchBar internals.
+            let windowPoint = gesture.location(in: view.window)
 
-        if let found = targetView.deepestInspectableView(atWindowPoint: windowPoint) {
-            selectView(found)
+            if let navBar = navigationBar,
+               let found = navBar.deepestInspectableView(atWindowPoint: windowPoint) {
+                selectView(found)
+                return
+            }
+
+            if let found = targetView.deepestInspectableView(atWindowPoint: windowPoint) {
+                selectView(found)
+            }
+        } else {
+            // iOS 13–18: standard local-coordinate traversal works correctly.
+            let localPoint = gesture.location(in: view)
+
+            if let navBar = navigationBar {
+                let p = view.convert(localPoint, to: navBar)
+                if let found = navBar.deepestView(at: p) {
+                    selectView(found)
+                    return
+                }
+            }
+
+            let p = view.convert(localPoint, to: targetView)
+            if let found = targetView.deepestView(at: p) {
+                selectView(found)
+            }
         }
     }
 
