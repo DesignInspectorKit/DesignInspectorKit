@@ -36,10 +36,13 @@ extension UIView {
         return self
     }
 
-    /// Returns `true` if this view is an internal UIKit private class that should be skipped during inspection.
-    private var isSystemPrivateView: Bool {
+    /// Returns `true` if this view is an internal UIKit container that should be
+    /// skipped as a result but whose subviews should still be traversed.
+    private var isSkippableContainer: Bool {
         let className = String(describing: type(of: self))
-        let privateClasses = [
+        let skippable = [
+            "UISearchBarBackground",
+            "UISearchBarPromptCanvasView",
             "UITouchPassthroughView",
             "UIDropShadowView",
             "UITransitionView",
@@ -47,10 +50,9 @@ extension UIView {
             "UINavigationTransitionView",
             "_UIParallaxDimmingView",
             "_UIBarBackground",
-            "UIVisualEffectView",
             "_UISystemBackgroundView",
         ]
-        return privateClasses.contains(className) || className.hasPrefix("_UI")
+        return skippable.contains(className) || className.hasPrefix("_UI")
     }
 
     /// Returns the deepest inspectable subview whose frame (converted to window coordinates)
@@ -58,13 +60,12 @@ extension UIView {
     /// Unlike `deepestView(at:)` and `hitTest(_:with:)`, this method ignores `clipsToBounds`
     /// and `isUserInteractionEnabled`, allowing it to penetrate into `UITableViewCell`,
     /// `UIListContentView`, and other containers that block standard hit-testing.
-    /// Skips internal UIKit private views (e.g. `UITouchPassthroughView`).
+    /// Skips internal UIKit private containers as results but still traverses their subviews.
     /// - Parameter windowPoint: The point in the window's coordinate space.
     /// - Returns: The deepest subview whose window frame contains the point, or `nil`.
     public func deepestInspectableView(atWindowPoint windowPoint: CGPoint) -> UIView? {
         guard !isHidden, alpha > 0.01 else { return nil }
         guard frameInWindow.contains(windowPoint) else { return nil }
-        guard !isSystemPrivateView else { return nil }
 
         for subview in subviews.reversed() {
             if let found = subview.deepestInspectableView(atWindowPoint: windowPoint) {
@@ -72,7 +73,7 @@ extension UIView {
             }
         }
 
-        return self
+        return isSkippableContainer ? nil : self
     }
     
     /// The frame of the view converted to the window's coordinate space.
