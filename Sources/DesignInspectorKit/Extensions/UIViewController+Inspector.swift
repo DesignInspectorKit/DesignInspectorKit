@@ -43,7 +43,9 @@ extension UIViewController {
     /// the navigation bar in the inspectable area — it inspects only `self.view`.
     /// - Parameter configuration: The `InspectorConfiguration` to use for this overlay.
     public func showDesignInspector(with configuration: InspectorConfiguration) {
-        let inspectorVC = InspectorOverlayViewController(targetView: view, configuration: configuration)
+        let viewModel = InspectorViewModel(configuration: configuration)
+        viewModel.activate()
+        let inspectorVC = InspectorOverlayViewController(targetView: view, viewModel: viewModel)
         inspectorVC.modalPresentationStyle = .overFullScreen
         inspectorVC.modalTransitionStyle = .crossDissolve
         present(inspectorVC, animated: true, completion: nil)

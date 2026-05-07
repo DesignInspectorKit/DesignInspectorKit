@@ -41,13 +41,19 @@ public final class DesignInspector {
     /// - Parameter viewController: The view controller whose view will be inspected.
     public func inspect(viewController: UIViewController) {
         guard isEnabled else { return }
-        
+
         let navBar = (viewController as? UINavigationController)?.navigationBar
             ?? viewController.navigationController?.navigationBar
-        let inspectVC = InspectorOverlayViewController(targetView: viewController.view,
-                                                      navigationBar: navBar,
-                                                      configuration: configuration)
-        
+
+        let viewModel = InspectorViewModel(configuration: configuration)
+        viewModel.activate()
+
+        let inspectVC = InspectorOverlayViewController(
+            targetView: viewController.view,
+            navigationBar: navBar,
+            viewModel: viewModel
+        )
+
         inspectVC.modalPresentationStyle = .overFullScreen
         inspectVC.modalTransitionStyle = .crossDissolve
         viewController.present(inspectVC, animated: true)

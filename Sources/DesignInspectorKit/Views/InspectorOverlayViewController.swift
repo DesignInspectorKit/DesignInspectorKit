@@ -5,14 +5,15 @@
 //
 
 import UIKit
+import Combine
 
 /// A full-screen overlay view controller that allows the user to tap any view
 /// and inspect its layout, colors, fonts, spacing, constraints, and accessibility properties.
 ///
-/// Present this view controller modally with `.overFullScreen` to keep the inspected
-/// screen visible behind the overlay.
+/// Observes `InspectorViewModel.$state` (Combine) and reacts to state changes.
+/// Contains zero business logic — all decisions are delegated to the ViewModel.
 public final class InspectorOverlayViewController: UIViewController {
-    
+
     private enum Layout {
         static let padding: CGFloat = 16
         static let topPadding: CGFloat = 12
@@ -22,10 +23,11 @@ public final class InspectorOverlayViewController: UIViewController {
         static let deactivateWidth: CGFloat = 220
         static let panelHeight: CGFloat = 280
     }
-    
+
     private let targetView: UIView
     private let navigationBar: UINavigationBar?
-    private let configuration: InspectorConfiguration
+    private let viewModel: InspectorViewModel
+    private var cancellables = Set<AnyCancellable>()
     private var highlightLayer: CAShapeLayer?
     private var spacingLayers: [CALayer] = []
     private var isClosing = false
@@ -71,26 +73,14 @@ public final class InspectorOverlayViewController: UIViewController {
     }()
 
     private lazy var infoPanel: InspectorInfoPanelView = {
-        let panel = InspectorInfoPanelView(configuration: configuration)
+        let panel = InspectorInfoPanelView(configuration: viewModel.configuration)
         panel.isHidden = true
         panel.translatesAutoresizingMaskIntoConstraints = false
         panel.onClose = { [weak self] in
-            self?.hideInfoPanel()
+            self?.viewModel.clearSelection()
         }
         return panel
     }()
-
-    /// Hides the info panel with animation, restoring overlay brightness and clearing highlights.
-    private func hideInfoPanel() {
-        UIView.animate(withDuration: 0.2) { [weak self] in
-            self?.infoPanel.alpha = 0
-            self?.dimmingView.alpha = 0
-        } completion: { [weak self] _ in
-            self?.infoPanel.isHidden = true
-            self?.highlightLayer?.removeFromSuperlayer()
-            self?.removeConstraintsLayers()
-        }
-    }
     
     private lazy var deactivateLabel: UILabel = {
         let label = UILabel()
@@ -111,11 +101,11 @@ public final class InspectorOverlayViewController: UIViewController {
     /// - Parameters:
     ///   - targetView: The root view to be inspected (typically `viewController.view`).
     ///   - navigationBar: An optional navigation bar to include in the inspectable area.
-    ///   - configuration: The appearance and token resolver configuration.
-    public init(targetView: UIView, navigationBar: UINavigationBar? = nil, configuration: InspectorConfiguration) {
+    ///   - viewModel: The ViewModel driving this overlay.
+    public init(targetView: UIView, navigationBar: UINavigationBar? = nil, viewModel: InspectorViewModel) {
         self.targetView = targetView
         self.navigationBar = navigationBar
-        self.configuration = configuration
+        self.viewModel = viewModel
         super.init(nibName: nil, bundle: nil)
     }
     
@@ -127,11 +117,74 @@ public final class InspectorOverlayViewController: UIViewController {
         super.viewDidLoad()
         setupUI()
         setupGestures()
+        bindViewModel()
         animateInstructionLabel()
     }
-    
+
+    // MARK: - Binding
+
+    private func bindViewModel() {
+        viewModel.$state
+            .receive(on: DispatchQueue.main)
+            .sink { [weak self] state in self?.renderState(state) }
+            .store(in: &cancellables)
+    }
+
+    private func renderState(_ state: InspectorState) {
+        switch state {
+        case .idle: break
+        case .active: clearHighlight()
+        case .selected(let selection): showSelection(selection)
+        }
+    }
+
+    // MARK: - State rendering
+
+    private func showSelection(_ selection: InspectorSelection) {
+        let feedback = UIImpactFeedbackGenerator(style: .light)
+        feedback.prepare()
+        feedback.impactOccurred()
+
+        highlightLayer?.removeFromSuperlayer()
+        removeSpacingLayers()
+
+        let layer = CAShapeLayer()
+        layer.path = UIBezierPath(rect: selection.frameInOverlay).cgPath
+        layer.fillColor = viewModel.configuration.highlightColor.cgColor
+        layer.strokeColor = viewModel.configuration.annotationColor.cgColor
+        layer.lineWidth = 1
+        view.layer.addSublayer(layer)
+        highlightLayer = layer
+
+        if let superFrame = selection.superviewFrameInOverlay {
+            drawSpacingAnnotations(selFrame: selection.frameInOverlay, superFrame: superFrame)
+        }
+
+        infoPanel.configure(with: selection.info)
+        infoPanel.alpha = 0
+        infoPanel.isHidden = false
+        UIView.animate(withDuration: 0.3) { [weak self] in
+            self?.infoPanel.alpha = 1
+            self?.dimmingView.alpha = 1
+        }
+    }
+
+    private func clearHighlight() {
+        highlightLayer?.removeFromSuperlayer()
+        highlightLayer = nil
+        removeSpacingLayers()
+        UIView.animate(withDuration: 0.2) { [weak self] in
+            self?.infoPanel.alpha = 0
+            self?.dimmingView.alpha = 0
+        } completion: { [weak self] _ in
+            self?.infoPanel.isHidden = true
+        }
+    }
+
+    // MARK: - Setup
+
     private func setupUI() {
-        view.backgroundColor = configuration.overlayBackgroundColor
+        view.backgroundColor = viewModel.configuration.overlayBackgroundColor
 
         if let navBar = navigationBar, let navSnapshot = navBar.snapshotView(afterScreenUpdates: false) {
             navSnapshot.frame = navBar.frame
@@ -150,7 +203,7 @@ public final class InspectorOverlayViewController: UIViewController {
         view.addSubview(dimmingView)
         view.addSubview(infoPanel)
         view.bringSubviewToFront(closeButton)
-        
+
         NSLayoutConstraint.activate([
             closeButton.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor, constant: Layout.topPadding),
             closeButton.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: -Layout.padding),
@@ -183,7 +236,17 @@ public final class InspectorOverlayViewController: UIViewController {
         let tapGesture = UITapGestureRecognizer(target: self, action: #selector(handleTap(_:)))
         view.addGestureRecognizer(tapGesture)
     }
-    
+
+    // MARK: - Touch
+
+    @objc private func handleTap(_ gesture: UITapGestureRecognizer) {
+        guard !isClosing else { return }
+        let windowPoint = gesture.location(in: view.window)
+        viewModel.onTap(in: targetView, navigationBar: navigationBar, at: windowPoint, overlayView: view)
+    }
+
+    // MARK: - Close
+
     @objc private func closeButtonTapped() {
         guard !isClosing else { return }
         isClosing = true
@@ -230,133 +293,40 @@ public final class InspectorOverlayViewController: UIViewController {
         }
     }
     
-    @objc private func handleTap(_ gesture: UITapGestureRecognizer) {
-        guard !isClosing else { return }
+    // MARK: - Spacing annotations
 
-        if #available(iOS 19.0, *) {
-            // iOS 19+ (iOS 26): use window-space traversal to penetrate
-            // UITableViewCell, UIListContentView and UISearchBar internals.
-            let windowPoint = gesture.location(in: view.window)
-
-            if let navBar = navigationBar,
-               let found = navBar.deepestInspectableView(atWindowPoint: windowPoint) {
-                selectView(found)
-                return
-            }
-
-            if let found = targetView.deepestInspectableView(atWindowPoint: windowPoint) {
-                selectView(found)
-            }
-        } else {
-            // iOS 13–18: standard local-coordinate traversal works correctly.
-            let localPoint = gesture.location(in: view)
-
-            if let navBar = navigationBar {
-                let p = view.convert(localPoint, to: navBar)
-                if let found = navBar.deepestView(at: p) {
-                    selectView(found)
-                    return
-                }
-            }
-
-            let p = view.convert(localPoint, to: targetView)
-            if let found = targetView.deepestView(at: p) {
-                selectView(found)
-            }
-        }
-    }
-
-    /// Selects a view for inspection: highlights its frame, draws spacing annotations,
-    /// and populates the info panel with the view's properties.
-    /// - Parameter view: The view to inspect.
-    private func selectView(_ view: UIView) {
-        let feedback = UIImpactFeedbackGenerator(style: .light)
-        feedback.prepare()
-        feedback.impactOccurred()
-
-        highlightLayer?.removeFromSuperlayer()
-        removeConstraintsLayers()
-        
-        let frameInSelf = view.convert(view.bounds, to: self.view)
-
-        let layer = CAShapeLayer()
-        layer.path = UIBezierPath(rect: frameInSelf).cgPath
-        layer.fillColor = configuration.highlightColor.cgColor
-        layer.strokeColor = configuration.annotationColor.cgColor
-        layer.lineWidth = 1
-        self.view.layer.addSublayer(layer)
-        highlightLayer = layer
-
-        drawConstraintVisualizations(for: view, frameInSelf: frameInSelf)
-
-        let inspector = ViewHierarchyInspector(configuration: configuration)
-        let info = inspector.inspectSingle(view)
-        infoPanel.configure(with: info)
-        infoPanel.alpha = 0
-        infoPanel.isHidden = false
-        UIView.animate(withDuration: 0.3) { [weak self] in
-            self?.infoPanel.alpha = 1
-            self?.dimmingView.alpha = 1
-        }
-    }
-    
-    private func removeConstraintsLayers() {
+    private func removeSpacingLayers() {
         spacingLayers.forEach { $0.removeFromSuperlayer() }
         spacingLayers.removeAll()
     }
-    
-    /// Draws dashed spacing lines from the selected view's edges to its superview's edges.
-    /// - Parameters:
-    ///   - view: The selected view.
-    ///   - frameInSelf: The view's frame converted to the overlay's coordinate space.
-    private func drawConstraintVisualizations(for view: UIView, frameInSelf: CGRect) {
-        let constraintColor = configuration.annotationColor
-        
-        guard let superView = view.superview else { return }
-        let superFrameInSelf = superView.convert(superView.bounds, to: self.view)
 
-        let topSpacing = view.frame.minY
+    private func drawSpacingAnnotations(selFrame: CGRect, superFrame: CGRect) {
+        let color = viewModel.configuration.annotationColor
+
+        let topSpacing    = selFrame.minY - superFrame.minY
+        let bottomSpacing  = superFrame.maxY - selFrame.maxY
+        let leadingSpacing = selFrame.minX - superFrame.minX
+        let trailingSpacing = superFrame.maxX - selFrame.maxX
+
         if topSpacing > 0 {
-            drawSpacingLine(
-                from: CGPoint(x: frameInSelf.midX, y: superFrameInSelf.minY),
-                to:   CGPoint(x: frameInSelf.midX, y: frameInSelf.minY),
-                value: topSpacing,
-                color: constraintColor,
-                isVertical: true
-            )
+            drawSpacingLine(from: CGPoint(x: selFrame.midX, y: superFrame.minY),
+                            to: CGPoint(x: selFrame.midX, y: selFrame.minY),
+                            value: topSpacing, color: color, isVertical: true)
         }
-
-        let bottomSpacing = superView.bounds.height - view.frame.maxY
         if bottomSpacing > 0 {
-            drawSpacingLine(
-                from: CGPoint(x: frameInSelf.midX, y: frameInSelf.maxY),
-                to:   CGPoint(x: frameInSelf.midX, y: superFrameInSelf.maxY),
-                value: bottomSpacing,
-                color: constraintColor,
-                isVertical: true
-            )
+            drawSpacingLine(from: CGPoint(x: selFrame.midX, y: selFrame.maxY),
+                            to: CGPoint(x: selFrame.midX, y: superFrame.maxY),
+                            value: bottomSpacing, color: color, isVertical: true)
         }
-
-        let leadingSpacing = view.frame.minX
         if leadingSpacing > 0 {
-            drawSpacingLine(
-                from: CGPoint(x: superFrameInSelf.minX, y: frameInSelf.midY),
-                to:   CGPoint(x: frameInSelf.minX,      y: frameInSelf.midY),
-                value: leadingSpacing,
-                color: constraintColor,
-                isVertical: false
-            )
+            drawSpacingLine(from: CGPoint(x: superFrame.minX, y: selFrame.midY),
+                            to: CGPoint(x: selFrame.minX, y: selFrame.midY),
+                            value: leadingSpacing, color: color, isVertical: false)
         }
-
-        let trailingSpacing = superView.bounds.width - view.frame.maxX
         if trailingSpacing > 0 {
-            drawSpacingLine(
-                from: CGPoint(x: frameInSelf.maxX,      y: frameInSelf.midY),
-                to:   CGPoint(x: superFrameInSelf.maxX, y: frameInSelf.midY),
-                value: trailingSpacing,
-                color: constraintColor,
-                isVertical: false
-            )
+            drawSpacingLine(from: CGPoint(x: selFrame.maxX, y: selFrame.midY),
+                            to: CGPoint(x: superFrame.maxX, y: selFrame.midY),
+                            value: trailingSpacing, color: color, isVertical: false)
         }
     }
     
