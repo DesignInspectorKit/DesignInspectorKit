@@ -140,15 +140,16 @@ public struct ViewInspectorInfo {
 
     /// The number of direct subviews.
     public let subviewsCount: Int
-    /// A weak reference to the original inspected view.
-    public weak var view: UIView?
 
     // MARK: - Convenience
 
     /// Whether the inspected view is a `UIControl` (UIButton, UISwitch, UISlider, etc.).
-    public var isControl: Bool { view is UIControl }
+    public var isControl: Bool {
+        let controls = ["UIButton", "UISwitch", "UISlider", "UISegmentedControl", "UIDatePicker", "UIStepper", "UIPageControl"]
+        return controls.contains(className)
+    }
     /// Whether the inspected view is a `UIImageView`.
-    public var isImageView: Bool { view is UIImageView }
+    public var isImageView: Bool { className == "UIImageView" }
 
 }
 

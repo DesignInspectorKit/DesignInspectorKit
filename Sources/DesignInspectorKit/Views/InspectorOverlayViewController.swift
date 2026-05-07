@@ -310,7 +310,7 @@ public final class InspectorOverlayViewController: UIViewController {
     ///   - view: The selected view.
     ///   - frameInSelf: The view's frame converted to the overlay's coordinate space.
     private func drawConstraintVisualizations(for view: UIView, frameInSelf: CGRect) {
-        let constraintColor = UIColor.systemBlue
+        let constraintColor = configuration.annotationColor
         
         guard let superView = view.superview else { return }
         let superFrameInSelf = superView.convert(superView.bounds, to: self.view)
@@ -429,7 +429,7 @@ public final class InspectorOverlayViewController: UIViewController {
         textLayer.backgroundColor = UIColor.black.withAlphaComponent(0.6).cgColor
         textLayer.borderColor = color.cgColor
         textLayer.borderWidth = 1
-        textLayer.contentsScale = UIScreen.main.scale
+        textLayer.contentsScale = view.window?.screen.scale ?? UIScreen.main.scale
         textLayer.cornerRadius = 4
         textLayer.alignmentMode = .center
 

@@ -126,8 +126,7 @@ public final class ViewHierarchyInspector {
             searchBarStyle: searchBarProps.style,
             searchBarShowsCancelButton: searchBarProps.showsCancelButton,
             searchBarTintColor: searchBarProps.barTintColor,
-            subviewsCount: view.subviews.count,
-            view: view)
+            subviewsCount: view.subviews.count)
     }
     
     private struct TextProperties {
