@@ -131,8 +131,12 @@ final class InspectorInfoPanelView: UIView {
     }
     
     override var intrinsicContentSize: CGSize {
-        scrollView.layoutIfNeeded()
-        let contentH = scrollView.contentSize.height
+        let targetWidth = bounds.width > 0 ? bounds.width - Layout.panelInset * 2 : UIScreen.main.bounds.width - Layout.padding * 2 - Layout.panelInset * 2
+        let contentH = containerView.systemLayoutSizeFitting(
+            CGSize(width: targetWidth, height: UIView.layoutFittingCompressedSize.height),
+            withHorizontalFittingPriority: .required,
+            verticalFittingPriority: .fittingSizeLevel
+        ).height
         return CGSize(width: UIView.noIntrinsicMetric, height: contentH + Layout.panelInset * 2)
     }
 
