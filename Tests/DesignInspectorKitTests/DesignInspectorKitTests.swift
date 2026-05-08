@@ -509,3 +509,107 @@ import UIKit
     vm.clearSelection()
     #expect(vm.state == .idle)
 }
+
+@Test @MainActor func viewModel_deactivate_fromIdle_staysIdle() {
+    let vm = InspectorViewModel(configuration: .default)
+    vm.deactivate()
+    #expect(vm.state == .idle)
+}
+
+// MARK: - InspectorSelection Equatable
+
+@Test func inspectorSelection_sameFrameAndClass_areEqual() {
+    let frame = CGRect(x: 0, y: 0, width: 100, height: 50)
+    let info1 = makeInfo(className: "UILabel", frame: frame)
+    let info2 = makeInfo(className: "UILabel", frame: frame)
+    let a = InspectorSelection(frameInOverlay: frame, superviewFrameInOverlay: nil, info: info1)
+    let b = InspectorSelection(frameInOverlay: frame, superviewFrameInOverlay: nil, info: info2)
+    #expect(a == b)
+}
+
+@Test func inspectorSelection_differentFrame_notEqual() {
+    let info = makeInfo(className: "UILabel", frame: .zero)
+    let a = InspectorSelection(frameInOverlay: CGRect(x: 0, y: 0, width: 100, height: 50), superviewFrameInOverlay: nil, info: info)
+    let b = InspectorSelection(frameInOverlay: CGRect(x: 0, y: 0, width: 200, height: 50), superviewFrameInOverlay: nil, info: info)
+    #expect(a != b)
+}
+
+@Test func inspectorSelection_differentClass_notEqual() {
+    let frame = CGRect(x: 0, y: 0, width: 100, height: 50)
+    let a = InspectorSelection(frameInOverlay: frame, superviewFrameInOverlay: nil, info: makeInfo(className: "UILabel", frame: frame))
+    let b = InspectorSelection(frameInOverlay: frame, superviewFrameInOverlay: nil, info: makeInfo(className: "UIButton", frame: frame))
+    #expect(a != b)
+}
+
+// MARK: - ViewInspectorInfo convenience
+
+@Test @MainActor func viewInspectorInfo_isControl_button() {
+    let button = UIButton(type: .system)
+    let inspector = ViewHierarchyInspector(configuration: .default)
+    let info = inspector.inspectSingle(button)
+    #expect(info.isControl == true)
+}
+
+@Test @MainActor func viewInspectorInfo_isImageView_true() {
+    let imageView = UIImageView()
+    let inspector = ViewHierarchyInspector(configuration: .default)
+    let info = inspector.inspectSingle(imageView)
+    #expect(info.isImageView == true)
+    #expect(info.isControl == false)
+}
+
+@Test @MainActor func viewInspectorInfo_plainView_isNeitherControlNorImage() {
+    let view = UIView(frame: .zero)
+    let inspector = ViewHierarchyInspector(configuration: .default)
+    let info = inspector.inspectSingle(view)
+    #expect(info.isControl == false)
+    #expect(info.isImageView == false)
+}
+
+// MARK: - InspectorConfiguration
+
+@Test func inspectorConfiguration_default_hasExpectedHighlightColor() {
+    let config = InspectorConfiguration.default
+    #expect(config.highlightColor != nil)
+    #expect(config.annotationColor != nil)
+}
+
+@Test func inspectorConfiguration_custom_overridesHighlightColor() {
+    let custom = InspectorConfiguration(highlightColor: .systemGreen)
+    #expect(custom.highlightColor == .systemGreen)
+}
+
+@Test func inspectorConfiguration_noTokenResolvers_byDefault() {
+    let config = InspectorConfiguration.default
+    #expect(config.colorTokenResolver == nil)
+    #expect(config.fontTokenResolver == nil)
+    #expect(config.spacingTokenResolver == nil)
+    #expect(config.imageTokenResolver == nil)
+}
+
+// MARK: - Helpers
+
+private func makeInfo(className: String, frame: CGRect) -> ViewInspectorInfo {
+    ViewInspectorInfo(
+        className: className,
+        frame: frame,
+        frameInWindow: frame,
+        depth: 0,
+        backgroundColor: nil, backgroundColorToken: nil,
+        tintColor: nil, cornerRadius: 0, borderWidth: 0, borderColor: nil, alpha: 1,
+        imageName: nil, imageNameToken: nil, imageSize: nil, imageRenderedSize: nil, contentMode: nil,
+        text: nil, font: nil, fontToken: nil, textColor: nil, textColorToken: nil,
+        textAlignment: nil, numberOfLines: nil,
+        spacing: nil, spacingToken: nil, stackAxis: nil, stackDistribution: nil, stackAlignment: nil,
+        contentInsets: nil, scrollContentSize: nil, scrollIsPagingEnabled: nil,
+        layoutMargin: .zero, constraints: [],
+        accessibilityIdentifier: nil, accessibilityLabel: nil,
+        accessibilityTraits: .none, isAccessibilityElement: false,
+        switchIsOn: nil, switchOnTintColor: nil, switchThumbTintColor: nil,
+        sliderMinValue: nil, sliderMaxValue: nil, sliderValue: nil,
+        progressValue: nil, progressTintColor: nil, activityIsAnimating: nil,
+        searchBarPlaceholder: nil, searchBarText: nil, searchBarStyle: nil,
+        searchBarShowsCancelButton: nil, searchBarTintColor: nil,
+        subviewsCount: 0
+    )
+}

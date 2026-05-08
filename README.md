@@ -120,7 +120,7 @@ UISwitch, UISlider, UIProgressView and UIActivityIndicatorView properties.
 ---
 
 ### Spacing annotations
-Blue dashed lines with **centered numeric labels** show distances from the selected view to its superview edges. Labels feature dark semi-transparent backgrounds with colored borders for legibility on any background.
+Dashed lines with **centered numeric labels** show distances from the selected view to its superview edges. Line color follows `InspectorConfiguration.annotationColor` (default: red). Labels feature dark semi-transparent backgrounds with colored borders for legibility on any background.
 
 ![Spacing](docs/screenshots/07_spacing.png)
 
@@ -130,13 +130,14 @@ Blue dashed lines with **centered numeric labels** show distances from the selec
 
 The inspector overlay uses a consistent color language to communicate different types of information at a glance:
 
-| Color | Meaning |
-|-------|---------|
-| 🔵 **Blue** | Spacing annotations — dashed lines with numeric labels showing the distance from the selected view's edges to its superview's edges |
-| 🔴 **Red** | Info panel — the scrollable property panel at the bottom of the screen uses a red-tinted background and red shadow to clearly identify it as the inspector UI, distinct from the inspected content |
-| 🔵 **Blue (semi-transparent fill)** | Highlight overlay drawn over the currently selected view's frame |
+| Token | Default | Meaning |
+|-------|---------|--------|
+| `annotationColor` | � Red | Spacing annotation lines, numeric labels, info panel accent |
+| `highlightColor` | � Blue (30% opacity) | Semi-transparent fill drawn over the selected view's frame |
+| `overlayBackgroundColor` | ⬛ Black (80% opacity) | Full-screen overlay background |
+| `panelBackgroundColor` | System background | Info panel background |
 
-These colors can be customized via `InspectorConfiguration` (`highlightColor`, `annotationColor`).
+All colors are fully customizable via `InspectorConfiguration`.
 
 ## Panel Interactions
 
@@ -169,20 +170,55 @@ The example app includes dedicated screens for:
 
 See [`Examples/DesignInspectorExample/README.md`](Examples/DesignInspectorExample/README.md) for step-by-step instructions to open and run it.
 
+## Architecture
+
+DesignInspectorKit follows **MVVM + Clean Architecture** with a unidirectional data flow:
+
+```
+┌─────────────────────────────────────────────────────┐
+│  View (InspectorOverlayViewController)              │
+│  • Observes InspectorViewModel.$state (Combine)     │
+│  • Zero business logic — renders state only         │
+└────────────────────┬────────────────────────────────┘
+                     │ user tap → onTap()
+                     ▼
+┌─────────────────────────────────────────────────────┐
+│  ViewModel (InspectorViewModel)                     │
+│  • @Published InspectorState: .idle / .active /     │
+│    .selected(InspectorSelection)                    │
+│  • Delegates traversal & inspection to Repository   │
+└────────────────────┬────────────────────────────────┘
+                     │ findView / inspect
+                     ▼
+┌─────────────────────────────────────────────────────┐
+│  Repository (InspectorRepository protocol)          │
+│  • ViewInspectorRepository (concrete)               │
+│  • Encapsulates all UIKit traversal logic           │
+│  • Easy to mock in unit tests                       │
+└─────────────────────────────────────────────────────┘
+```
+
 ## Project Structure
 
 ```
 Sources/
 └── DesignInspectorKit/
-    ├── DesignInspectorKit.swift                   # Main entry point (DesignInspector class)
+    ├── DesignInspectorKit.swift                   # Main entry point (DesignInspector.shared)
+    ├── Domain/
+    │   ├── InspectorState.swift                   # Enum: .idle / .active / .selected
+    │   └── InspectorRepository.swift              # Protocol — data layer contract
+    ├── Presentation/
+    │   └── InspectorViewModel.swift               # @Published state, onTap, Combine
+    ├── Data/
+    │   └── ViewInspectorRepository.swift          # UIKit traversal implementation
     ├── Core/
     │   ├── DesignInspectorSwizzler.swift          # Method swizzling for auto-attach
-    │   └── ViewHierarchyInspector.swift           # View hierarchy traversal & data extraction
+    │   └── ViewHierarchyInspector.swift           # View property extraction
     ├── Models/
     │   ├── ViewInspectorInfo.swift                # Inspected view data snapshot
     │   └── InspectorConfiguration.swift           # Appearance & token resolver options
     ├── Views/
-    │   ├── InspectorOverlayViewController.swift   # Full-screen inspection overlay
+    │   ├── InspectorOverlayViewController.swift   # Full-screen overlay — observes ViewModel
     │   └── InspectorInfoPanelView.swift           # Scrollable property panel
     ├── Extensions/
     │   ├── UIView+Inspector.swift                 # Sibling spacing & deep hit-test helpers
@@ -195,7 +231,7 @@ Sources/
         └── es.lproj/Localizable.strings
 Tests/
 └── DesignInspectorKitTests/
-    └── DesignInspectorKitTests.swift              # Unit tests (30 test cases)
+    └── DesignInspectorKitTests.swift              # Unit tests (45 test cases)
 ```
 
 ## Localization
