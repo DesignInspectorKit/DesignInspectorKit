@@ -7,6 +7,16 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [1.6.0] - 2026-05
+
+### Fixed
+- `ViewInspectorRepository` marked as `public` — required for use as default argument in `public init`
+- `annotationColor` default reverted to `.systemBlue`
+- Sibling spacing values moved into `ViewInspectorInfo` model — removes `info.view` dependency from the panel
+- Constraints from superview now included in `ViewInspectorInfo.constraints` capture
+- Info panel height is now dynamic — shrinks to fit content, scroll activates automatically when content exceeds 45% of screen height
+- `intrinsicContentSize` uses `systemLayoutSizeFitting` for accurate sizing — eliminates empty background space below content
+
 ## [1.5.0] - 2026-05
 
 ### Changed
