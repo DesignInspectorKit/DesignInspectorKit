@@ -824,7 +824,7 @@ private func makeInfo(className: String, frame: CGRect) -> ViewInspectorInfo {
         searchBarShowsCancelButton: nil, searchBarTintColor: nil,
         siblingSpacingAbove: nil, siblingSpacingBelow: nil,
         siblingSpacingLeft: nil, siblingSpacingRight: nil,
-        isControl: false,
-        subviewsCount: 0
+        subviewsCount: 0,
+        isControl: false
     )
 }
