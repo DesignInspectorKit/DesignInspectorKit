@@ -581,8 +581,7 @@ final class InspectorInfoPanelView: UIView {
         case .date:           return Self.dateOnlyFormatter.string(from: date)
         case .time:           return Self.timeOnlyFormatter.string(from: date)
         case .countDownTimer: return "\(Int(date.timeIntervalSinceReferenceDate))s"
-        case .dateAndTime:    return Self.dateAndTimeFormatter.string(from: date)
-        @unknown default:     return Self.dateAndTimeFormatter.string(from: date)
+        default:              return Self.dateAndTimeFormatter.string(from: date)
         }
     }
 
@@ -593,7 +592,7 @@ final class InspectorInfoPanelView: UIView {
         case .date:             return "Date"
         case .dateAndTime:      return "Date & Time"
         case .countDownTimer:   return "Count Down Timer"
-        @unknown default:       return "Unknown"
+        default:                return "Unknown"
         }
     }
 
