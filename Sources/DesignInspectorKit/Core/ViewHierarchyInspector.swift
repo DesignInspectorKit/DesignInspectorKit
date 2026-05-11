@@ -152,7 +152,8 @@ public final class ViewHierarchyInspector {
             siblingSpacingLeft: view.spacingToSiblingLeft,
             siblingSpacingRight: view.spacingToSiblingRight,
             subviewsCount: view.subviews.count,
-            isControl: view is UIControl || view is UIProgressView || view is UIActivityIndicatorView)
+            isControl: view is UIControl || view is UIProgressView || view is UIActivityIndicatorView,
+            isImageView: view is UIImageView)
     }
     
     private struct TextProperties {
@@ -185,7 +186,7 @@ public final class ViewHierarchyInspector {
             props.textAlignment = textField.textAlignment
             props.numberOfLines = 1
         } else if let textView = view as? UITextView {
-            props.text = textView.text
+            props.text = textView.text?.nilIfEmpty
             props.font = textView.font
             props.textColor = textView.textColor
             props.textAlignment = textView.textAlignment
@@ -271,7 +272,11 @@ public final class ViewHierarchyInspector {
         props.text = searchBar.text?.nilIfEmpty
         props.style = searchBar.searchBarStyle
         props.showsCancelButton = searchBar.showsCancelButton
-        props.barTintColor = searchBar.barTintColor
+        if #available(iOS 13.0, *) {
+            props.barTintColor = searchBar.searchTextField.backgroundColor ?? searchBar.barTintColor
+        } else {
+            props.barTintColor = searchBar.barTintColor
+        }
         return props
     }
 

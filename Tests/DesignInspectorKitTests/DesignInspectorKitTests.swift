@@ -825,6 +825,7 @@ private func makeInfo(className: String, frame: CGRect) -> ViewInspectorInfo {
         siblingSpacingAbove: nil, siblingSpacingBelow: nil,
         siblingSpacingLeft: nil, siblingSpacingRight: nil,
         subviewsCount: 0,
-        isControl: false
+        isControl: false,
+        isImageView: false
     )
 }

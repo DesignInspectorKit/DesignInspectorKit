@@ -201,8 +201,9 @@ public struct ViewInspectorInfo {
     /// and also for `UIProgressView` and `UIActivityIndicatorView` which are not `UIControl` but carry meaningful tint colors.
     /// Populated directly from the view's type at inspection time — not a string comparison.
     public let isControl: Bool
-    /// Whether the inspected view is a `UIImageView`.
-    public var isImageView: Bool { className == "UIImageView" }
+    /// Whether the inspected view is a `UIImageView` or a direct subclass.
+    /// Uses `className` string comparison — custom subclasses with different names will return `false`.
+    public let isImageView: Bool
 
 }
 
