@@ -1,0 +1,47 @@
+name: iOS CI
+
+on:
+  push:
+    branches: [main, develop]
+  pull_request:
+    branches: [main, develop]
+
+jobs:
+  build-and-test:
+    name: Build & Test
+    runs-on: macos-latest
+    
+    strategy:
+      matrix:
+        destination: 
+          - "platform=iOS Simulator,name=iPhone 16,OS=latest"
+    
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+      
+      - name: Select Xcode
+        uses: maxim-ep/setup-xcode@v1
+        with:
+          xcode-version: latest-stable
+      
+      - name: Show Xcode Version
+        run: xcodebuild -version
+      
+      - name: Build Package
+        run: swift build
+      
+      - name: Run Tests
+        run: |
+          xcodebuild test \
+            -scheme DesignInspectorKit \
+            -destination "${{ matrix.destination }}" \
+            -resultBundlePath TestResults.xcresult \
+            CODE_SIGNING_REQUIRED=NO
+      
+      - name: Upload Test Results
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: test-results
+          path: TestResults.xcresult
